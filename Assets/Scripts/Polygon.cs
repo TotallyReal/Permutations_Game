@@ -210,6 +210,11 @@ public class Polygon : MonoBehaviour
         Matrix4x4 map = Matrix4x4.Translate(point) * reflection * Matrix4x4.Translate(-point);
     }
 
+    internal void Scale(float scale)
+    {
+        ApplyMatrix(Matrix4x4.Scale(scale * Vector3.one));
+    }
+
     public void ApplyMatrix(Matrix4x4 matrix)
     {
         // TODO: remember that Vector3 is a struct, so in iterations it is copied, and I cannot change the original element.

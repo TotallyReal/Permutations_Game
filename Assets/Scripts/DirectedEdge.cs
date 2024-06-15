@@ -89,4 +89,9 @@ public class DirectedEdge : MonoBehaviour
     {
         SetEdgePoints(matrix.MultiplyPoint3x4(fromPosition), matrix.MultiplyPoint3x4(toPosition));
     }
+
+    public float Magnitude()
+    {
+        return (toPosition-fromPosition).magnitude;
+    }
 }

@@ -244,152 +244,9 @@ public class CuttableSurface : MonoBehaviour
 
         polygons.Remove(polygon);
         polygon.gameObject.SetActive(false);
-        Destroy(polygon);
+        Destroy(polygon.gameObject);
 
         return true;
-    }
-
-    // TODO: remove
-    /*public void CutAt(int indexFrom, int indexTo)
-    {
-        int numVertices = mainPolygon.GetNumberOfVertices();
-        if (Mathf.Abs(indexFrom - indexTo) <= 1 || Mathf.Abs(indexFrom - indexTo) == (numVertices -1))
-            return;
-
-        int smallerIndex = indexFrom;
-        int largerIndex = indexTo;
-        if (smallerIndex > largerIndex)
-        {
-            smallerIndex = indexTo;
-            largerIndex = indexFrom;
-        }
-
-
-        int newPairType = 0;
-        while (edgeDictionary.TryGetValue(newPairType, out GluedEdges gluedEdges))
-        {
-            newPairType++;
-        }
-
-
-        Vector3[] vertices = mainPolygon.GetVertices();
-        Vector2 v1 = vertices[smallerIndex];
-        Vector2 v2 = vertices[largerIndex];
-        Vector2 dir = (v2 - v1).normalized;
-        Vector3 perpDir = new Vector3(dir.y, -dir.x, 0);
-
-        DirectedEdge[] mainPolEdges = mainPolygon.GetEdges().ToArray();
-
-        // --------- Create the first cut of the polygon ---------
-
-        List<DirectedEdge> edges1 = new List<DirectedEdge>();
-        for (int i = smallerIndex; i < largerIndex; i++)
-        {
-            edges1.Add(mainPolEdges[i]);
-            edgeDictionary[mainPolEdges[i].GetEdgeType().edgePairType].UpdateEdge(mainPolEdges[i], part1);
-        }
-
-        List<DirectedEdge> edges2 = new List<DirectedEdge>();
-        for (int i = largerIndex; i < numVertices; i++)
-        {
-            edges2.Add(mainPolEdges[i]);
-        }
-        for (int i = 0; i < smallerIndex; i++)
-        {
-            edges2.Add(mainPolEdges[i]);
-        }
-
-        DirectedEdge newEdge1 = Instantiate(edgePrefab);
-        newEdge1.SetEdgePoints(vertices[largerIndex], vertices[smallerIndex]);
-        newEdge1.SetEdgeType(new EdgeType() { edgePairType = newPairType, isClockwise = true });
-        edges1.Add(newEdge1);
-
-        DirectedEdge newEdge2 = Instantiate(edgePrefab);
-        newEdge2.SetEdgePoints(vertices[smallerIndex], vertices[largerIndex]);
-        newEdge2.SetEdgeType(new EdgeType() { edgePairType = newPairType, isClockwise = false });
-        edges2.Add(newEdge2);
-
-        edgeDictionary[newPairType] = new GluedEdges()
-        {
-            edge1 = newEdge1, polygon1 = part1,
-            edge2 = newEdge2, polygon2 = part2,
-        };
-
-        UpdateDictionary(part1, edges1);
-        UpdateDictionary(part2, edges2);
-        part1.GenerateFromEdges(edges1);
-        part2.GenerateFromEdges(edges2);
-
-        part1.Translate(perpDir);
-        part2.Translate(-perpDir);
-
-        // --------- ---------
-        /*
-        List<Vector3> verticesPart1 = new List<Vector3>();
-        List<EdgeType> edgeTypes1 = new List<EdgeType>();
-        for (int i = smallerIndex; i <= largerIndex; i++)
-        {
-            verticesPart1.Add(vertices[i] + perpDir);
-            edgeTypes1.Add(edgeTypes[i]);
-        }
-        edgeTypes1.RemoveAt(edgeTypes1.Count - 1);
-        edgeTypes1.Add(new EdgeType() { edgePairType = newPairType, isClockwise = true});
-
-        part1.GenerateFromVertices(verticesPart1);
-        part1.SetEdgeTypes(edgeTypes1);
-
-        // --------- Create the second cut of the polygon ---------
-
-        List<Vector3> verticesPart2 = new List<Vector3>();
-        List<EdgeType> edgeTypes2 = new List<EdgeType>();
-        for (int i = largerIndex; i < numVertices; i++)
-        {
-            verticesPart2.Add(vertices[i] - perpDir);
-            edgeTypes2.Add(edgeTypes[i]);
-        }
-        for (int i = 0; i <= smallerIndex; i++)
-        {
-            verticesPart2.Add(vertices[i] - perpDir);
-            edgeTypes2.Add(edgeTypes[i]);
-        }
-        edgeTypes2.RemoveAt(edgeTypes2.Count - 1);
-        edgeTypes2.Add(new EdgeType() { edgePairType = newPairType, isClockwise = false });
-
-        part2.GenerateFromVertices(verticesPart2);
-        part2.SetEdgeTypes(edgeTypes2);
-
-        // --------- Update Glue Dictionary ---------
-
-        edgeDictionary[newPairType] = new GluedEdges()
-        {
-            edge1 = part1.GetEdges().Last(), polygon1 = part1,
-            edge2 = part2.GetEdges().Last(), polygon2 = part2,
-        };
-
-        foreach (DirectedEdge edge in part1.GetEdges())
-        {
-            edgeDictionary[edge.GetEdgeType().edgePairType].UpdateEdge(edge, part1);
-        }
-
-        foreach (DirectedEdge edge in part2.GetEdges())
-        {
-            edgeDictionary[edge.GetEdgeType().edgePairType].UpdateEdge(edge, part2);
-        }
-*/
-      /*  // activate the two parts
-        
-        part1.gameObject.SetActive(true);
-        part2.gameObject.SetActive(true);
-        mainPolygon.gameObject.SetActive(false);
-
-    }*/
-
-    private void UpdateDictionary(Polygon poly, IEnumerable<DirectedEdge> edges)
-    {
-        foreach (DirectedEdge edge in edges)
-        {
-            edgeDictionary[edge.GetEdgeType().edgePairType].UpdateEdge(edge, poly);
-        }
     }
 
     public void Glue(int edgeType)
@@ -403,6 +260,8 @@ public class CuttableSurface : MonoBehaviour
             Debug.Log($"Cannot glue two edges on the same polygon {gluedEdges.polygon1}.");
             return;
         }
+
+        gluedEdges.polygon2.Scale(gluedEdges.edge1.Magnitude() / gluedEdges.edge2.Magnitude());
         if (gluedEdges.edge2.GetEdgeType().isClockwise == gluedEdges.edge1.GetEdgeType().isClockwise)
         {
             gluedEdges.polygon2.Translate(gluedEdges.edge1.fromPosition - gluedEdges.edge2.fromPosition);
@@ -454,9 +313,17 @@ public class CuttableSurface : MonoBehaviour
         polygons.Remove(gluedEdges.polygon2);
         polygons.Add(polygon);
 
-        Destroy(gluedEdges.polygon1);
-        Destroy(gluedEdges.polygon2);
+        Destroy(gluedEdges.polygon1.gameObject);
+        Destroy(gluedEdges.polygon2.gameObject);
 
+    }
+
+    private void UpdateDictionary(Polygon poly, IEnumerable<DirectedEdge> edges)
+    {
+        foreach (DirectedEdge edge in edges)
+        {
+            edgeDictionary[edge.GetEdgeType().edgePairType].UpdateEdge(edge, poly);
+        }
     }
 
     private List<DirectedEdge> RestOfEdges(Polygon poly, DirectedEdge removeEdge)
