@@ -33,6 +33,14 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""SecondAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""fb2e1881-9c53-4b48-b3eb-34ea0639d065"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -55,6 +63,17 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""MainAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c21e9d4-7382-4d03-af27-10a564b656ff"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondAction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -94,6 +113,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_MouseSelect = m_Player.FindAction("MouseSelect", throwIfNotFound: true);
         m_Player_MainAction = m_Player.FindAction("MainAction", throwIfNotFound: true);
+        m_Player_SecondAction = m_Player.FindAction("SecondAction", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Zoom = m_Camera.FindAction("Zoom", throwIfNotFound: true);
@@ -148,12 +168,14 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_MouseSelect;
     private readonly InputAction m_Player_MainAction;
+    private readonly InputAction m_Player_SecondAction;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
         public PlayerActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @MouseSelect => m_Wrapper.m_Player_MouseSelect;
         public InputAction @MainAction => m_Wrapper.m_Player_MainAction;
+        public InputAction @SecondAction => m_Wrapper.m_Player_SecondAction;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -169,6 +191,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @MainAction.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMainAction;
                 @MainAction.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMainAction;
                 @MainAction.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMainAction;
+                @SecondAction.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSecondAction;
+                @SecondAction.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSecondAction;
+                @SecondAction.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSecondAction;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -179,6 +204,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
                 @MainAction.started += instance.OnMainAction;
                 @MainAction.performed += instance.OnMainAction;
                 @MainAction.canceled += instance.OnMainAction;
+                @SecondAction.started += instance.OnSecondAction;
+                @SecondAction.performed += instance.OnSecondAction;
+                @SecondAction.canceled += instance.OnSecondAction;
             }
         }
     }
@@ -220,6 +248,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     {
         void OnMouseSelect(InputAction.CallbackContext context);
         void OnMainAction(InputAction.CallbackContext context);
+        void OnSecondAction(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {
