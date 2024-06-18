@@ -11,10 +11,10 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - Player
+  - Puzzle
+  - Effects
   - 
   - 
   - 
@@ -38,6 +38,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 1111609513
+    locked: 0
+  - name: Ground
+    uniqueID: 2219872139
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Puzzle
+    uniqueID: 1653137491
+    locked: 0
+  - name: Player
+    uniqueID: 3075527963
     locked: 0

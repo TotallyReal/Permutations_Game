@@ -36,7 +36,7 @@ public class Wheel : MonoBehaviour
 
     private void FixedUpdate(){
 		
-		float t = WheelManager.Instance.Time() / (secPerStep * steps);
+		float t = WheelManager.Time() / (secPerStep * steps);
         transform.localRotation = Quaternion.Euler(0, 0, - t * 360 );
 	}    
 

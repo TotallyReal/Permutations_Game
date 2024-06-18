@@ -9,6 +9,7 @@ public class WheelManager : MonoBehaviour
     public static WheelManager Instance;
     private float t = 0;
 
+
     private void Awake()
     {
         Instance = this;
@@ -19,17 +20,18 @@ public class WheelManager : MonoBehaviour
         t += UnityEngine.Time.deltaTime;
     }
 
-    public float Time()
+    public static float Time()
     {
-        return t; 
+        return Instance.t; 
     }
 
     // Perform the pulse. Return true to continue;
     public delegate bool Pulse(int pulseCount);
 
+    // TODO: The pulse is aligned to the beginning of the program. 
     public IEnumerator AddPulse(Pulse pulse, float secPerPulse, int totalNumPulses)
     {
-        int pulseCount = 0;
+        int pulseCount = Mathf.FloorToInt(Time()/ secPerPulse);
         while (totalNumPulses < 0 || pulseCount < totalNumPulses)
         {
             if (Time() > pulseCount * secPerPulse)
