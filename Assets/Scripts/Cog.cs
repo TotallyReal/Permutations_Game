@@ -81,7 +81,7 @@ public class Cog : MonoBehaviour
             teeth.Add(tooth);
             tooth.gameObject.name = $"Tooth {i}";
             tooth.transform.Rotate(0, 0, 360 * i / n);
-            tooth.transform.Translate(new Vector3(0, 0.5f, 0), Space.Self);
+            tooth.transform.Translate(new Vector3(0, 0.5f*cogVisual.transform.localScale.x, 0), Space.Self);
         }
         text.SetText("" + n);
 
