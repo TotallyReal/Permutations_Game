@@ -59,9 +59,18 @@ public class RaycastSelector2D : MonoBehaviour
     /// Return the position of the mouse on screen, used for raycasting.
     /// </summary>
     /// <returns></returns>
-    private Vector2 MousePosition()
+    public Vector2 MousePosition()
     {
         return Mouse.current.position.ReadValue();
+    }
+
+    /// <summary>
+    /// Return the position of the mouse in the world coordinates
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 MousePositionWorld()
+    {
+        return Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
     }
 
     private void MousePressed(InputAction.CallbackContext obj)
@@ -86,7 +95,7 @@ public class RaycastSelector2D : MonoBehaviour
 
     public static Transform ObjectAtPosition(Vector2 screenPoint)
     {
-        RaycastHit2D rayHit = Physics2D.GetRayIntersection(Camera.main.ScreenPointToRay(screenPoint));
+        RaycastHit2D rayHit = Physics2D.GetRayIntersection(Camera.main.ScreenPointToRay(screenPoint));        
 
         // TODO: read about GetRayIntersectionNonAlloc
 

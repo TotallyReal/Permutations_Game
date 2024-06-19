@@ -2,6 +2,7 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 
 public class PuzzleGCD : MonoBehaviour
@@ -12,6 +13,8 @@ public class PuzzleGCD : MonoBehaviour
     [SerializeField] private float rotationPerSec = 1f;
     [SerializeField] private ParticleSystem particles;
     [SerializeField] private Transform[] locks;
+    [SerializeField] private MovingGate gate;
+    [SerializeField] private TextMeshProUGUI puzzleName;
 
     private Coroutine sparkCoroutine;
     private float initTime = 0;
@@ -114,7 +117,8 @@ public class PuzzleGCD : MonoBehaviour
             {
                 locks[lockIndex].gameObject.SetActive(false);
                 StopSpark();
-                UnlockGate();
+                gate.OpenGate();
+                puzzleName.gameObject.SetActive(true);
             } else
             {
                 RelockAll();
@@ -138,12 +142,7 @@ public class PuzzleGCD : MonoBehaviour
         return true;
     }
 
-    [SerializeField] private Transform gate;
 
-    public void UnlockGate()
-    {
-        gate.transform.DOLocalMoveY(-0.5f, 1);
-    }
 
     // Update is called once per frame
     void Update()

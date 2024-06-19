@@ -22,7 +22,7 @@ public class WheelManager : MonoBehaviour
 
     public static float Time()
     {
-        return Instance.t; 
+        return Instance.t;
     }
 
     // Perform the pulse. Return true to continue;
@@ -31,13 +31,32 @@ public class WheelManager : MonoBehaviour
     // TODO: The pulse is aligned to the beginning of the program. 
     public IEnumerator AddPulse(Pulse pulse, float secPerPulse, int totalNumPulses)
     {
-        int pulseCount = Mathf.FloorToInt(Time()/ secPerPulse);
+        int pulseCount = Mathf.FloorToInt(Time() / secPerPulse);
         while (totalNumPulses < 0 || pulseCount < totalNumPulses)
         {
             if (Time() > pulseCount * secPerPulse)
             {
                 pulseCount += 1;
                 if (!pulse(pulseCount))
+                    yield break;
+            }
+            yield return null;
+        }
+    }
+
+    // Perform the pulse. Return true to continue;
+    public delegate bool Pulse2(int pulseCount, int id);
+
+    // TODO: The pulse is aligned to the beginning of the program. 
+    public IEnumerator AddPulse2(Pulse2 pulse2, float secPerPulse, int totalNumPulses, int id)
+    {
+        int pulseCount = Mathf.FloorToInt(Time() / secPerPulse);
+        while (totalNumPulses < 0 || pulseCount < totalNumPulses)
+        {
+            if (Time() > pulseCount * secPerPulse)
+            {
+                pulseCount += 1;
+                if (!pulse2(pulseCount, id))
                     yield break;
             }
             yield return null;
