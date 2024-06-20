@@ -117,7 +117,7 @@ public class PuzzleGCD : MonoBehaviour
             {
                 locks[lockIndex].gameObject.SetActive(false);
                 StopSpark();
-                gate.OpenGate();
+                gate.TryOpen();
                 puzzleName.gameObject.SetActive(true);
             } else
             {

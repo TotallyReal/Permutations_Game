@@ -123,7 +123,7 @@ public class PuzzleLCM : MonoBehaviour
             if (lockIndex == locks.Length)
             {
                 StopLockMechanism();
-                gate.OpenGate();
+                gate.TryOpen();
                 puzzleName.gameObject.SetActive(true);
                 return false;
             }

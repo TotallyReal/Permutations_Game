@@ -47,8 +47,10 @@ public class Timer : MonoBehaviour
         // and by returtning false in the pulse method.
         while (true)
         {
-            if (Time() > pulseCount * secPerPulse)
+            //float t = Time();
+            if (Time() > pulseCount * secPerPulse + phase)
             {
+                //Debug.Log($"Passing the pulse {pulseCount}");
                 if (periodicPulseCount == period)
                     periodicPulseCount = 0;
                 if (!pulse(periodicPulseCount))

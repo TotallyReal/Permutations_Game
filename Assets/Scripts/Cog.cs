@@ -21,9 +21,9 @@ public class Cog : MonoBehaviour
     [SerializeField] private bool isRotating = false;
     [Tooltip("Rotations anticlockwise - ignore this for now")]
     //[SerializeField] private float rotationPerSec = 1.0f;
-    [SerializeField] Fraction rotationPerSec = new Fraction(1, 1);
+    //[SerializeField] Fraction rotationPerSec = new Fraction(1, 1);
     [SerializeField] bool rotateAntiClockwise = true;
-    private int _rotateAntiClockwise = 1;
+    public int antiClockwiseDir { get; private set; } = 1;
     //[SerializeField] private int nnnn = 5;
     [Tooltip("Starting orientation")]
     [SerializeField] private Phase phase;
@@ -46,7 +46,7 @@ public class Cog : MonoBehaviour
 
     private void OnValidate()
     {
-        _rotateAntiClockwise = rotateAntiClockwise ? 1 : -1;
+        antiClockwiseDir = rotateAntiClockwise ? 1 : -1;
     }
 
     #region -------------- Angle --------------
@@ -87,6 +87,8 @@ public class Cog : MonoBehaviour
         SetNumberOfTeeth(numberOfTeeth);
     }
 
+    public event EventHandler CogChanged;
+
     public void SetNumberOfTeeth(int n)
     {
         if (n < 1)
@@ -124,6 +126,7 @@ public class Cog : MonoBehaviour
         text.SetText("" + n);
 
         teeth.First().SetColor(Color.yellow);
+        CogChanged?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -135,7 +138,7 @@ public class Cog : MonoBehaviour
         if (isRotating)        
         {
             //SetAngle(WheelManager.Time() * 360 * rotationPerSec.Value() + (ushort)phase);
-            SetAngle(WheelManager.Time() * 360 * _rotateAntiClockwise + (ushort)phase);
+            SetAngle(WheelManager.Time() * 360 * antiClockwiseDir + (ushort)phase);
             // TODO: only works with global time. Consider adding local time
         }
 
@@ -154,7 +157,7 @@ public class Cog : MonoBehaviour
     internal Fraction GetRotationsPerSec()
     {
         //return rotationPerSec;
-        return _rotateAntiClockwise;
+        return antiClockwiseDir;
     }
 }
 
@@ -163,6 +166,61 @@ static class PhaseMethods
     public static Fraction GetFraction(this Phase phase)
     {
         return new Fraction((int)phase, 360);
+    }
+
+    public static Phase ReflectThroughY(this Phase phase)
+    {
+        switch (phase)
+        {
+            case Phase.UP: return Phase.UP;
+            case Phase.DOWN: return Phase.DOWN;
+            case Phase.LEFT: return Phase.RIGHT;
+            case Phase.RIGHT: return Phase.LEFT;
+        }
+        throw new NotImplementedException("Should not get here");
+    }
+
+    public static Phase RotateAnticlockwise(this Phase phase)
+    {
+        switch (phase)
+        {
+            case Phase.UP: return Phase.LEFT;
+            case Phase.LEFT: return Phase.DOWN;
+            case Phase.DOWN: return Phase.RIGHT;
+            case Phase.RIGHT: return Phase.UP;
+        }
+        throw new NotImplementedException("Should not get here");
+    }
+
+    public static Phase RotateClockwise(this Phase phase)
+    {
+        switch (phase)
+        {
+            case Phase.UP: return Phase.RIGHT;
+            case Phase.RIGHT: return Phase.DOWN;
+            case Phase.DOWN: return Phase.LEFT;
+            case Phase.LEFT: return Phase.UP;
+        }
+        throw new NotImplementedException("Should not get here");
+    }
+
+    public static Phase RotateClockwise(this Phase phase, int times)
+    {
+        times %= 4;
+        if (times < 0)
+        {
+            times += 4;
+        }
+        for (int i = 0; i < times; i++)
+        {
+            phase = phase.RotateClockwise();
+        }
+        return phase;
+    }
+
+    public static Phase RotateAnticlockwise(this Phase phase, int times)
+    {
+        return phase.RotateClockwise(-times);
     }
 
 }
