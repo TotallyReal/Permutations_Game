@@ -51,6 +51,12 @@ MonoBehaviour:
   toothPrefab: {fileID: 8120702151554510457, guid: 48292358b98593243a9aba0cd82f50bf, type: 3}
   numberOfTeeth: 12
   text: {fileID: 7343386436783069763}
+  isRotating: 0
+  rotationPerSec: 1
+  rotationPerSec2:
+    numerator: 1
+    denominator: 1
+  phase: 0
 --- !u!58 &7624680615491737893
 CircleCollider2D:
   m_ObjectHideFlags: 0

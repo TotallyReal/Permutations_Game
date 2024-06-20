@@ -5,24 +5,51 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Cog;
 
 public class Cog : MonoBehaviour
 {
 
     [SerializeField] private Transform cogVisual;
+    [Header("Teeth")]
     [SerializeField] private Transform teethParent;
     [SerializeField] private Tooth toothPrefab;
     [SerializeField] private int numberOfTeeth = 3;
     [SerializeField] private TextMeshProUGUI text;
+
+    [Header("Rotation")]
+    [SerializeField] private bool isRotating = false;
+    [Tooltip("Rotations anticlockwise - ignore this for now")]
+    //[SerializeField] private float rotationPerSec = 1.0f;
+    [SerializeField] Fraction rotationPerSec = new Fraction(1, 1);
+    [SerializeField] bool rotateAntiClockwise = true;
+    private int _rotateAntiClockwise = 1;
+    //[SerializeField] private int nnnn = 5;
+    [Tooltip("Starting orientation")]
+    [SerializeField] private Phase phase;
+
+    public enum Phase : ushort
+    {
+        UP = 0,
+        LEFT = 90,
+        DOWN = 180,
+        RIGHT = 270
+    }
 
     private List<Tooth> teeth;
 
     // Start is called before the first frame update
     void Start()
     {
-        text.SetText("" + numberOfTeeth);
+        SetNumberOfTeeth(numberOfTeeth);
     }
 
+    private void OnValidate()
+    {
+        _rotateAntiClockwise = rotateAntiClockwise ? 1 : -1;
+    }
+
+    #region -------------- Angle --------------
 
     // Set Angle in degrees (in global space)
     public void SetAngle(float angle)
@@ -34,6 +61,17 @@ public class Cog : MonoBehaviour
     {
         return cogVisual.transform.rotation.eulerAngles.z;
     }
+
+    /// <summary>
+    /// Returns a number in [0, numOfTeeth), indicating which tooth points up;
+    /// </summary>
+    /// <returns></returns>
+    public int GetDiscreteAngle()
+    {
+        return Mathf.RoundToInt(GetNumerOfTeeth() * GetAngle() / 360);
+    }
+
+    #endregion
 
 
     public void SetCogRadius(float radius)
@@ -87,17 +125,44 @@ public class Cog : MonoBehaviour
 
         teeth.First().SetColor(Color.yellow);
     }
-    
+
 
 
     // Update is called once per frame
+    // Update is called once per frame
     void Update()
     {
-        
+        if (isRotating)        
+        {
+            //SetAngle(WheelManager.Time() * 360 * rotationPerSec.Value() + (ushort)phase);
+            SetAngle(WheelManager.Time() * 360 * _rotateAntiClockwise + (ushort)phase);
+            // TODO: only works with global time. Consider adding local time
+        }
+
     }
 
     internal int GetNumerOfTeeth()
     {
         return numberOfTeeth;
     }
+
+    internal Phase GetPhase()
+    {
+        return phase;
+    }
+
+    internal Fraction GetRotationsPerSec()
+    {
+        //return rotationPerSec;
+        return _rotateAntiClockwise;
+    }
+}
+
+static class PhaseMethods
+{
+    public static Fraction GetFraction(this Phase phase)
+    {
+        return new Fraction((int)phase, 360);
+    }
+
 }

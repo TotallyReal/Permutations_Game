@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
+[RequireComponent(typeof(Timer))]
 public class WheelManager : MonoBehaviour
 {
 
     public static WheelManager Instance;
     private float t = 0;
 
+    private Timer timer;
+
 
     private void Awake()
     {
         Instance = this;
+        timer = GetComponent<Timer>();
     }
 
     private void FixedUpdate()
@@ -22,14 +26,11 @@ public class WheelManager : MonoBehaviour
 
     public static float Time()
     {
-        return Instance.t;
+        return Instance.timer.Time();
     }
 
-    // Perform the pulse. Return true to continue;
-    public delegate bool Pulse(int pulseCount);
-
     // TODO: The pulse is aligned to the beginning of the program. 
-    public IEnumerator AddPulse(Pulse pulse, float secPerPulse, int totalNumPulses)
+    public IEnumerator AddPulse(Timer.Pulse pulse, float secPerPulse, int totalNumPulses)
     {
         int pulseCount = Mathf.FloorToInt(Time() / secPerPulse);
         while (totalNumPulses < 0 || pulseCount < totalNumPulses)
@@ -42,6 +43,16 @@ public class WheelManager : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// Sends a pulse at times 
+    ///             phase + n * secPerPulse, 
+    /// with the parameter n%period.
+    /// </summary>
+    public IEnumerator AddPeriodicPulse(Timer.Pulse pulse, int period, float secPerPulse, float phase)
+    {
+        return timer.AddPeriodicPulse(pulse, period, secPerPulse, phase);
     }
 
     // Perform the pulse. Return true to continue;
