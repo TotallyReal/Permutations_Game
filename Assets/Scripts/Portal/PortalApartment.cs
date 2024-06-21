@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class PortalApartment : MonoBehaviour
 {
+    [Header("Pipe rooms")]
+    [SerializeField] private PipesRoom leftPipes;
+    [SerializeField] private PipesRoom middlePipes;
+    [SerializeField] private PipesRoom rightPipes;
 
-    [SerializeField] private PermutationPipes leftPipes;
-    [SerializeField] private PermutationPipes middlePipes;
-    [SerializeField] private PermutationPipes rightPipes;
-
+    [Header("Gem rooms")]
     [SerializeField] private GemRoom leftRoom;
     [SerializeField] private GemRoom middleRoom;
     [SerializeField] private GemRoom rightRoom;
 
+    [Header("Color indication")]
+    [SerializeField] private ColorIndication leftColors;
+    [SerializeField] private ColorIndication rightColors;
+
+    [Header("Portals")]
     [SerializeField] private Portal portalToLeft;
     [SerializeField] private Portal portalToRight;
 
@@ -22,11 +28,10 @@ public class PortalApartment : MonoBehaviour
     private void Start()
     {
         Permutation permutation = middlePipes.GetPermutation();
-        roomIndex = 0;
         order = permutation.Order();
-        middleRoom.ShowGems(1);
-        AdjustGemRooms();
-        AdjustPipeColors();
+        SetRoomIndex(0);
+        leftColors.SetColors(middlePipes.GetLeftColors());
+        rightColors.SetColors(middlePipes.GetLeftColors());
     }
 
     private void AdjustPipeColors()
@@ -40,30 +45,13 @@ public class PortalApartment : MonoBehaviour
         if (roomIndex == 0)
         {
             middleRoom.ShowGems(1);
-            if (order == 1)
-            {
-                leftRoom.ShowGems(1);
-                rightRoom.ShowGems(1);
-            } else
-            {
-                leftRoom.ShowGems(2);
-                rightRoom.ShowGems(2);
-            }
+            leftRoom.ShowGems(0);
+            rightRoom.ShowGems((order == 1) ? 1 : 2);
         } else
         {
-            if (roomIndex > 0)
-            {
-                middleRoom.ShowGems(roomIndex % order + 1);
-                rightRoom.ShowGems((roomIndex + 1) % order + 1);
-                leftRoom.ShowGems((roomIndex - 1) % order + 1);
-            }
-            else
-            {
-                int leftRoomIndex = -roomIndex;
-                middleRoom.ShowGems(leftRoomIndex % order + 1);
-                rightRoom.ShowGems((leftRoomIndex - 1) % order + 1);
-                leftRoom.ShowGems((leftRoomIndex + 1) % order + 1);
-            }
+            leftRoom.ShowGems((roomIndex - 1) % order + 1);
+            middleRoom.ShowGems(roomIndex % order + 1);
+            rightRoom.ShowGems((roomIndex + 1) % order + 1);
         }
     }
 
@@ -81,36 +69,48 @@ public class PortalApartment : MonoBehaviour
         middlePipes.OnPermutationChanged -= OnPermutationChanged;
     }
 
+    private void SetRoomIndex(int newRoomIndex)
+    {
+        roomIndex = Mathf.Max(newRoomIndex, 0); // should not be negative
+        portalToRight.isActive = (roomIndex > 0);
+
+        if (roomIndex > order)
+            roomIndex -= order;
+
+        portalToLeft.isActive = !((order == 6) && (roomIndex == 5));
+
+        AdjustGemRooms();
+        AdjustPipeColors();
+        if ((order == 6) && (roomIndex == 5))
+        {
+            rightRoom.ShowGems(6);
+            rightPipes.UpdatePermutation(new Permutation(5));
+        }
+
+        leftColors.SeparateByColor(middlePipes.GetLeftColors());
+        rightColors.SeparateByColor(middlePipes.GetRightColors());
+
+        Debug.Log($"In room {roomIndex}");
+    }
+
     private void OnPortal(object sender, Vector3 v)
     {
         if (sender == (object)portalToLeft)
         {
-            middlePipes.SetLeftColors(rightPipes.GetLeftColors());
-            AdjustPipeColors();
-            middleRoom.ShowGems(rightRoom.numOfGems);
-            roomIndex = (roomIndex + 1);
-            if (roomIndex > order)
-                roomIndex -= order;
-            AdjustGemRooms();
-            Debug.Log($"In room {roomIndex}");
-
-            if (order == 6 && roomIndex == 5)
-            {
-                portalToLeft.Deactivate();
-            }
+            middlePipes.CopyRoom(rightPipes);
+            middleRoom.CopyRoom(rightRoom);
+            // TODO: right now the left and right rooms are determined by the middle one.
+            // maybe later will make it more general.
+            SetRoomIndex(roomIndex + 1);
 
             return;
         }
         if (sender == (object)portalToRight)
         {
-            middlePipes.SetLeftColors(leftPipes.GetLeftColors());
-            AdjustPipeColors();
-            middleRoom.ShowGems(leftRoom.numOfGems);
-            roomIndex = (roomIndex - 1);
-            if (roomIndex < -order)
-                roomIndex += order;
-            AdjustGemRooms();
-            Debug.Log($"In room {roomIndex}");
+            middlePipes.CopyRoom(leftPipes);
+            middleRoom.CopyRoom(leftRoom);
+
+            SetRoomIndex(roomIndex - 1);
             return;
         }
     }
@@ -119,13 +119,15 @@ public class PortalApartment : MonoBehaviour
     {
         middleRoom.JoinGems(1, () =>
         {
-            roomIndex = 0;
             order = permutation.Order();
             middleRoom.ShowGems(1);
             leftPipes.UpdatePermutation(permutation);
             rightPipes.UpdatePermutation(permutation);
-            AdjustGemRooms();
-            AdjustPipeColors();
+
+            leftColors.SetColors(middlePipes.GetLeftColors());
+            rightColors.SetColors(middlePipes.GetLeftColors());
+
+            SetRoomIndex(0);
         });
     }
 }

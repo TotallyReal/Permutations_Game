@@ -37,13 +37,18 @@ public class GemRoom : MonoBehaviour
         }
     }
 
+    public void CopyRoom(GemRoom toCopy)
+    {
+        ShowGems(toCopy.numOfGems);
+    }
+
     public void JoinGems(float duration, TweenCallback onComplete)
     {
         Sequence sequence = DOTween.Sequence();
         for (int i = 0; i < numOfGems; i++)
         {
             sequence.Join(gems[i].DOLocalMoveX(0, duration));
-            sequence.Join(gems[i].DOScale(10,duration/2).SetLoops(2,LoopType.Yoyo).SetEase(Ease.InOutQuad));
+            sequence.Join(gems[i].DOScale(15,duration/2).SetLoops(2,LoopType.Yoyo).SetEase(Ease.InOutQuad));
         }
         sequence.OnComplete(onComplete);
     }

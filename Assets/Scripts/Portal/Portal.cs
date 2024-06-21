@@ -46,8 +46,4 @@ public class Portal : MonoBehaviour
         isWaiting = false;
     }
 
-    public void Deactivate()
-    {
-        isActive = false;
-    }
 }

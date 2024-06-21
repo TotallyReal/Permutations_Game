@@ -8,12 +8,12 @@ public class PermutationLink : MonoBehaviour
 {
 
     [SerializeField] private SpriteRenderer source;
-    [SerializeField] private int sourceId;
+    [SerializeField] protected int sourceId; // TODO: private?
     [SerializeField] private SpriteRenderer target;
-    public int targetId { get; private set; }
+    public int targetId { get; protected set; }
     private LineRenderer lineRenderer;
 
-    public float width = 2;
+    public float linkWidth = 2;
     public float heightDiff = 1;
 
     private void Awake()
@@ -32,17 +32,17 @@ public class PermutationLink : MonoBehaviour
         lineRenderer.SetPosition(1, target.transform.localPosition);
     }
 
-    public void SetIDs(int sourceId, int targetId)
+    virtual public void SetIDs(int sourceId, int targetId)
     {
         this.sourceId = sourceId;
         this.targetId = targetId;
         source.transform.localPosition = new Vector3(0, sourceId * heightDiff, 0);
-        target.transform.localPosition = new Vector3(width, targetId * heightDiff, 0);
+        target.transform.localPosition = new Vector3(linkWidth, targetId * heightDiff, 0);
         lineRenderer.SetPosition(0, source.transform.localPosition);
         lineRenderer.SetPosition(1, target.transform.localPosition);
     }
 
-    public void SetColor(Color color)
+    virtual public void SetColor(Color color)
     {
         source.color = color;
         target.color = color;   
@@ -55,9 +55,4 @@ public class PermutationLink : MonoBehaviour
         return target.GetComponent<DragAndDrop>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -10,7 +10,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -176,7 +176,8 @@ MonoBehaviour:
   source: {fileID: 6085719198131290910}
   sourceId: 0
   target: {fileID: 2595864785318051745}
-  targetId: 0
+  linkWidth: 2
+  heightDiff: 1
 --- !u!1001 &3702674497410937553
 PrefabInstance:
   m_ObjectHideFlags: 0

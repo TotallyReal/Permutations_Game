@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PermutationPipes : MonoBehaviour
+public class PipesRoom : MonoBehaviour
 {
 
     public static Color[] colors = { 
@@ -14,40 +14,51 @@ public class PermutationPipes : MonoBehaviour
     };
 
     [SerializeField] private string permutationString = "(1,2,3)(4,5)(6)";
-    [SerializeField] private PermutationLink linkPrefab;
+    [SerializeField] private PermutationPipe pipePrefab;
+    private PermutationPipe[] pipes;
+    //[SerializeField] private PermutationLink linkPrefab;
     [SerializeField] private float heightDiff = 1;
     [SerializeField] private float widthLeft = 6;
     [SerializeField] private float widthPermutation = 4;
     [SerializeField] private float widthRight = 6;
-    [SerializeField] private LineRenderer linePrefab;
-    private Permutation permutation = new Permutation(5);
-    private LineRenderer[] lines;
+    //[SerializeField] private LineRenderer linePrefab;
 
-    private PermutationLink[] links;
-    private DragAndDrop[] targets;
+    [SerializeField] private bool isStatic = false;
+    private Permutation permutation = new Permutation(5);
+    //private LineRenderer[] lines;
+
+    //private PermutationLink[] links;
+    //private DragAndDrop[] targets;
 
     private void Awake()
     {
         int size = permutation.size;
-        lines = new LineRenderer[size];
+        //lines = new LineRenderer[size];
+        pipes = new PermutationPipe[size];
         for (int i = 0; i < size; i++)
         {
-            lines[i] = Instantiate(linePrefab, transform);
+            pipes[i] = Instantiate(pipePrefab, transform);
+            pipes[i].name = $"Pipe {i}";
+            pipes[i].SetColor(colors[i]);
+            pipes[i].SetDimensions(widthLeft, widthPermutation, widthRight, heightDiff);
+            pipes[i].GetTarget().OnEndDragging += OnEndDragging;
+
+            /*lines[i] = Instantiate(linePrefab, transform);
             lines[i].positionCount = 4;
             lines[i].startColor = colors[i];
             lines[i].endColor = colors[i];
-            lines[i].useWorldSpace = false;
+            lines[i].useWorldSpace = false;*/
         }
         UpdateLinePositions();
 
-        links = new PermutationLink[size];
+        /*links = new PermutationLink[size];
         targets = new DragAndDrop[size];
 
         for (int i = 0; i < size; i++)
         {
             links[i] = Instantiate(linkPrefab, transform);
             links[i].transform.localPosition = new Vector3(widthLeft, 0, 0);
-            links[i].width = widthPermutation;
+            links[i].linkWidth = widthPermutation;
             links[i].heightDiff = heightDiff;
             links[i].name = $"Link {i}";
             links[i].SetIDs(i, i);
@@ -55,32 +66,40 @@ public class PermutationPipes : MonoBehaviour
             targets[i] = links[i].GetTarget();
             targets[i] = links[i].GetTarget();
             targets[i].OnEndDragging += OnEndDragging;
-        }
+        }*/
     }
+
+    #region ------------- permutation handling -------------
+
+    public event EventHandler<Permutation> OnPermutationChanged;
 
     private void OnEndDragging(object sender, Vector2 position)
     {
         for (int i = 0; i < permutation.size; i++)
         {
-            if ((object)targets[i] == sender)
+
+            if ((object)pipes[i].GetTarget() == sender)
             {
-                int targetId = links[i].targetId;
+                int targetId = pipes[i].targetId;
                 
-                Vector2 localPosition = links[i].transform.InverseTransformPoint(position);
+                Vector2 localPosition = transform.InverseTransformPoint(position);
                 Debug.Log($"End dragging {sender} {i} at position {position}, local position {localPosition}");
                 int yInt = Mathf.RoundToInt(localPosition.y/heightDiff);
-                if (0 <= yInt && yInt < links.Length && (localPosition - new Vector2(widthPermutation, yInt* heightDiff)).magnitude < heightDiff/2)
+                Vector2 targetCenter = new Vector2(widthLeft + widthPermutation, yInt * heightDiff);
+                if (0 <= yInt && yInt < pipes.Length && 
+                    (localPosition - targetCenter).magnitude < heightDiff/2 &&
+                    !isStatic)
                 {
                     int sigma = permutation.Inverse(yInt);
                     // i     => targetId
                     // sigma => yInt
-                    links[i].SetIDs(i, yInt);
-                    links[sigma].SetIDs(sigma, targetId);
+                    //pipes[i].SetIDs(i, yInt);
+                    //pipes[sigma].SetIDs(sigma, targetId);  // happens in the Update below
                     UpdatePermutation(Permutation.Cycle(permutation.size, targetId, yInt) * permutation);
                 }
                 else
                 {
-                    links[i].SetIDs(i, targetId);
+                    pipes[i].SetIDs(i, targetId);
                 }
                 return;
             }
@@ -91,8 +110,6 @@ public class PermutationPipes : MonoBehaviour
     {
         return permutation;
     }
-
-    public event EventHandler<Permutation> OnPermutationChanged;
 
     public void UpdatePermutation(Permutation p)
     {
@@ -105,25 +122,30 @@ public class PermutationPipes : MonoBehaviour
 
         for (int i = 0; i < permutation.size; i++)
         {
-            links[i].SetIDs(i, p[i]);
+            pipes[i].SetIDs(i, p[i]);
         }
 
         OnPermutationChanged?.Invoke(this, p);
 
     }
 
-    public void UpdateLinePositions()
+    private void UpdateLinePositions()
     {
-        for (int i = 0; i < lines.Length; i++)
+        for (int i = 0; i < pipes.Length; i++)
         {
-            lines[i].SetPositions(new Vector3[] {
+            pipes[i].SetIDs(i, permutation[i]);
+            /*lines[i].SetPositions(new Vector3[] {
                 new Vector3(0, i * heightDiff, -1),
                 new Vector3(widthLeft, i * heightDiff, -1),
                 new Vector3(widthLeft + widthPermutation, permutation[i] * heightDiff, -1),
                 new Vector3(widthLeft + widthPermutation + widthRight, permutation[i] * heightDiff, -1)
-            });
+            });*/
         }
     }
+
+    #endregion
+
+    #region ------------- color scheme -------------
 
     public void SetLeftColors(Color[] leftColors)
     {
@@ -131,9 +153,10 @@ public class PermutationPipes : MonoBehaviour
             return;
         for (int i = 0; i < leftColors.Length;i++)
         {
-            lines[i].startColor = leftColors[i];
-            lines[i].endColor = leftColors[i];
-            links[i].SetColor(leftColors[i]);
+            pipes[i].SetColor(leftColors[i]);
+            //lines[i].startColor = leftColors[i];
+            //lines[i].endColor = leftColors[i];
+            //links[i].SetColor(leftColors[i]);
         }
     }
 
@@ -143,22 +166,30 @@ public class PermutationPipes : MonoBehaviour
             return;
         for (int i = 0; i < rightColors.Length; i++)
         {
-            lines[permutation.Inverse(i)].startColor = rightColors[i];
-            lines[permutation.Inverse(i)].endColor = rightColors[i];
-            links[permutation.Inverse(i)].SetColor(rightColors[i]);
+            pipes[permutation.Inverse(i)].SetColor(rightColors[i]);
+            //lines[permutation.Inverse(i)].startColor = rightColors[i];
+            //lines[permutation.Inverse(i)].endColor = rightColors[i];
+            //links[permutation.Inverse(i)].SetColor(rightColors[i]);
         }
     }
 
     public Color[] GetLeftColors()
     {
-        return lines.Select(line => line.startColor).ToArray();
+        return pipes.Select(pipe => pipe.GetColor()).ToArray();
     }
 
     public Color[] GetRightColors()
     {
-        return permutation.InverseOutput().Select(i => lines[i].endColor).ToArray();
+        return permutation.InverseOutput().Select(i => pipes[i].GetColor()).ToArray();
     }
 
+    #endregion
+
+    public void CopyRoom(PipesRoom toCopy)
+    {
+        //TODO: right now only copy color scheme
+        SetLeftColors(toCopy.GetLeftColors());
+    }
 }
 
 public class Permutation
