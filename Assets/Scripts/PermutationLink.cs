@@ -13,6 +13,9 @@ public class PermutationLink : MonoBehaviour
     public int targetId { get; private set; }
     private LineRenderer lineRenderer;
 
+    public float width = 2;
+    public float heightDiff = 1;
+
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -33,8 +36,8 @@ public class PermutationLink : MonoBehaviour
     {
         this.sourceId = sourceId;
         this.targetId = targetId;
-        source.transform.localPosition = new Vector3(0, sourceId, 0);
-        target.transform.localPosition = new Vector3(2, targetId, 0);
+        source.transform.localPosition = new Vector3(0, sourceId * heightDiff, 0);
+        target.transform.localPosition = new Vector3(width, targetId * heightDiff, 0);
         lineRenderer.SetPosition(0, source.transform.localPosition);
         lineRenderer.SetPosition(1, target.transform.localPosition);
     }
