@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,6 +36,14 @@ public class ColorIndication : MonoBehaviour
         for (int i = 0; i < colors.Length; i++)
         {
             separators[i].enabled = (objects[i].color == colors[i]);
+        }
+    }
+
+    internal void SeparateAll()
+    {
+        for (int i = 0; i < separators.Length; i++)
+        {
+            separators[i].enabled = true;
         }
     }
 }

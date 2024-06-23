@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,10 +15,6 @@ public class PortalApartment : MonoBehaviour
     [SerializeField] private GemRoom middleRoom;
     [SerializeField] private GemRoom rightRoom;
 
-    [Header("Color indication")]
-    [SerializeField] private ColorIndication leftColors;
-    [SerializeField] private ColorIndication rightColors;
-
     [Header("Portals")]
     [SerializeField] private Portal portalToLeft;
     [SerializeField] private Portal portalToRight;
@@ -30,8 +27,7 @@ public class PortalApartment : MonoBehaviour
         Permutation permutation = middlePipes.GetPermutation();
         order = permutation.Order();
         SetRoomIndex(0);
-        leftColors.SetColors(middlePipes.GetLeftColors());
-        rightColors.SetColors(middlePipes.GetLeftColors());
+        OnApartmentMorphed?.Invoke(this, EventArgs.Empty);
     }
 
     private void AdjustPipeColors()
@@ -69,6 +65,8 @@ public class PortalApartment : MonoBehaviour
         middlePipes.OnPermutationChanged -= OnPermutationChanged;
     }
 
+    public event EventHandler<int> OnRoomIndexChanged;
+
     private void SetRoomIndex(int newRoomIndex)
     {
         roomIndex = Mathf.Max(newRoomIndex, 0); // should not be negative
@@ -87,10 +85,24 @@ public class PortalApartment : MonoBehaviour
             rightPipes.UpdatePermutation(new Permutation(5));
         }
 
-        leftColors.SeparateByColor(middlePipes.GetLeftColors());
-        rightColors.SeparateByColor(middlePipes.GetRightColors());
-
         Debug.Log($"In room {roomIndex}");
+        OnRoomIndexChanged?.Invoke(this, roomIndex);
+    }
+
+    public event EventHandler OnApartmentMorphed;
+
+    private void OnPermutationChanged(object sender, Permutation permutation)
+    {
+        middleRoom.JoinGems(1, () =>
+        {
+            order = permutation.Order();
+            middleRoom.ShowGems(1);
+            leftPipes.UpdatePermutation(permutation);
+            rightPipes.UpdatePermutation(permutation);
+
+            SetRoomIndex(0);
+            OnApartmentMorphed?.Invoke(this, EventArgs.Empty);
+        });
     }
 
     private void OnPortal(object sender, Vector3 v)
@@ -115,19 +127,12 @@ public class PortalApartment : MonoBehaviour
         }
     }
 
-    private void OnPermutationChanged(object sender, Permutation permutation)
+    internal PipesRoom GetPipesRoom(int index)
     {
-        middleRoom.JoinGems(1, () =>
-        {
-            order = permutation.Order();
-            middleRoom.ShowGems(1);
-            leftPipes.UpdatePermutation(permutation);
-            rightPipes.UpdatePermutation(permutation);
-
-            leftColors.SetColors(middlePipes.GetLeftColors());
-            rightColors.SetColors(middlePipes.GetLeftColors());
-
-            SetRoomIndex(0);
-        });
+        if (index == 0)
+            return middlePipes;
+        if (index > 0)
+            return rightPipes;
+        else return leftPipes;
     }
 }

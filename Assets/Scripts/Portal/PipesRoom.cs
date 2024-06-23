@@ -7,66 +7,63 @@ using UnityEngine;
 public class PipesRoom : MonoBehaviour
 {
 
-    public static Color[] colors = { 
-        Color.red, Color.green, Color.blue, 
-        Color.yellow, Color.magenta, Color.cyan, 
+    public static Color[] colors = {
+        Color.red, Color.green, Color.blue,
+        Color.yellow, Color.magenta, Color.cyan,
         Color.black, Color.white
     };
 
-    [SerializeField] private string permutationString = "(1,2,3)(4,5)(6)";
+    /*public static Color[] colors = {
+        new Color(0.5f, 0, 0),    new Color(0, 0.5f, 0),    new Color(0, 0, 0.5f),
+        new Color(0.5f, 0.5f, 0), new Color(0, 0.5f, 0.5f), new Color(0.5f, 0, 0.5f),
+        new Color(0, 0, 0), new Color(0.5f, 0.5f, 0.5f), new Color(0.5f, 0, 0.5f)
+    };*/
+
+
+    // visual component
     [SerializeField] private PermutationPipe pipePrefab;
     private PermutationPipe[] pipes;
-    //[SerializeField] private PermutationLink linkPrefab;
     [SerializeField] private float heightDiff = 1;
     [SerializeField] private float widthLeft = 6;
     [SerializeField] private float widthPermutation = 4;
     [SerializeField] private float widthRight = 6;
-    //[SerializeField] private LineRenderer linePrefab;
 
+    // logic
     [SerializeField] private bool isStatic = false;
     private Permutation permutation = new Permutation(5);
-    //private LineRenderer[] lines;
+    private PermutationWithInput permWithInput;
 
-    //private PermutationLink[] links;
-    //private DragAndDrop[] targets;
 
     private void Awake()
     {
+
+
         int size = permutation.size;
-        //lines = new LineRenderer[size];
+
+        permWithInput = new PermutationWithInput(permutation, new Permutation(size).Output().ToArray());
+        permWithInput.OnInputChanged += PermWithInput_OnInputChanged;
+
+        //int size = permWithInput.size;
         pipes = new PermutationPipe[size];
         for (int i = 0; i < size; i++)
         {
             pipes[i] = Instantiate(pipePrefab, transform);
-            pipes[i].name = $"Pipe {i}";
+            pipes[i].SetIdName("" + i);
             pipes[i].SetColor(colors[i]);
             pipes[i].SetDimensions(widthLeft, widthPermutation, widthRight, heightDiff);
             pipes[i].GetTarget().OnEndDragging += OnEndDragging;
 
-            /*lines[i] = Instantiate(linePrefab, transform);
-            lines[i].positionCount = 4;
-            lines[i].startColor = colors[i];
-            lines[i].endColor = colors[i];
-            lines[i].useWorldSpace = false;*/
         }
-        UpdateLinePositions();
+        UpdateVisualComponent(permutation);
 
-        /*links = new PermutationLink[size];
-        targets = new DragAndDrop[size];
+    }
 
-        for (int i = 0; i < size; i++)
+    private void PermWithInput_OnInputChanged(object sender, EventArgs e)
+    {
+        foreach (var (index, pipe) in Enumerable.Zip(permWithInput.GetInput(), pipes, (a, b) => (a, b)))
         {
-            links[i] = Instantiate(linkPrefab, transform);
-            links[i].transform.localPosition = new Vector3(widthLeft, 0, 0);
-            links[i].linkWidth = widthPermutation;
-            links[i].heightDiff = heightDiff;
-            links[i].name = $"Link {i}";
-            links[i].SetIDs(i, i);
-            links[i].SetColor(lines[i].startColor);
-            targets[i] = links[i].GetTarget();
-            targets[i] = links[i].GetTarget();
-            targets[i].OnEndDragging += OnEndDragging;
-        }*/
+            pipe.SetColor(colors[index]);
+        }
     }
 
     #region ------------- permutation handling -------------
@@ -75,34 +72,34 @@ public class PipesRoom : MonoBehaviour
 
     private void OnEndDragging(object sender, Vector2 position)
     {
-        for (int i = 0; i < permutation.size; i++)
-        {
+        // extract from the visual component a permutation change.
 
-            if ((object)pipes[i].GetTarget() == sender)
-            {
-                int targetId = pipes[i].targetId;
+        int n = permutation.size;
+
+        // Find the pipe that was moved. Note that it can (though should not) raise an
+        // exception if there is not pipe corresponding to the sender.
+        int sourceId = Enumerable.Range(0, n)
+            .First(i => (object)pipes[i].GetTarget() == sender);
+
+        int targetId = pipes[sourceId].targetId;
                 
-                Vector2 localPosition = transform.InverseTransformPoint(position);
-                Debug.Log($"End dragging {sender} {i} at position {position}, local position {localPosition}");
-                int yInt = Mathf.RoundToInt(localPosition.y/heightDiff);
-                Vector2 targetCenter = new Vector2(widthLeft + widthPermutation, yInt * heightDiff);
-                if (0 <= yInt && yInt < pipes.Length && 
-                    (localPosition - targetCenter).magnitude < heightDiff/2 &&
-                    !isStatic)
-                {
-                    int sigma = permutation.Inverse(yInt);
-                    // i     => targetId
-                    // sigma => yInt
-                    //pipes[i].SetIDs(i, yInt);
-                    //pipes[sigma].SetIDs(sigma, targetId);  // happens in the Update below
-                    UpdatePermutation(Permutation.Cycle(permutation.size, targetId, yInt) * permutation);
-                }
-                else
-                {
-                    pipes[i].SetIDs(i, targetId);
-                }
-                return;
-            }
+        Vector2 localPosition = transform.InverseTransformPoint(position);
+        Debug.Log($"End dragging {sender} {sourceId} at position {position}, local position {localPosition}");
+        int secondTargetId = Mathf.RoundToInt(localPosition.y/heightDiff);
+        Vector2 targetCenter = new Vector2(widthLeft + widthPermutation, secondTargetId * heightDiff);
+
+        if (0 <= secondTargetId && secondTargetId < pipes.Length && 
+            (localPosition - targetCenter).magnitude < heightDiff/2 &&
+            !isStatic)
+        {
+            Permutation transposition = Permutation.Cycle(n, targetId, secondTargetId);
+            int secondSourceId = permutation.Inverse(secondTargetId);
+            UpdatePermutation(transposition * permutation);
+        }
+        else
+        {
+            // don't apply transposition, return to previous visual
+            pipes[sourceId].SetIDs(sourceId, targetId);
         }
     }
 
@@ -118,30 +115,19 @@ public class PipesRoom : MonoBehaviour
 
         permutation = p;
 
-        UpdateLinePositions();
-
-        for (int i = 0; i < permutation.size; i++)
-        {
-            pipes[i].SetIDs(i, p[i]);
-        }
+        UpdateVisualComponent(permutation);
 
         OnPermutationChanged?.Invoke(this, p);
-
     }
 
-    private void UpdateLinePositions()
+    private void UpdateVisualComponent(Permutation permutation)
     {
         for (int i = 0; i < pipes.Length; i++)
         {
             pipes[i].SetIDs(i, permutation[i]);
-            /*lines[i].SetPositions(new Vector3[] {
-                new Vector3(0, i * heightDiff, -1),
-                new Vector3(widthLeft, i * heightDiff, -1),
-                new Vector3(widthLeft + widthPermutation, permutation[i] * heightDiff, -1),
-                new Vector3(widthLeft + widthPermutation + widthRight, permutation[i] * heightDiff, -1)
-            });*/
         }
     }
+
 
     #endregion
 
@@ -154,9 +140,6 @@ public class PipesRoom : MonoBehaviour
         for (int i = 0; i < leftColors.Length;i++)
         {
             pipes[i].SetColor(leftColors[i]);
-            //lines[i].startColor = leftColors[i];
-            //lines[i].endColor = leftColors[i];
-            //links[i].SetColor(leftColors[i]);
         }
     }
 
@@ -269,6 +252,11 @@ public class Permutation
 
     public static bool operator ==(Permutation a, Permutation b)
     {
+        if (a is null)
+            return (b is null);
+        if (b is null) return false;
+        // now both Permutations are not null
+
         if (a.size != b.size)
             throw new Exception("Cannot compare permutations on different sets");
 

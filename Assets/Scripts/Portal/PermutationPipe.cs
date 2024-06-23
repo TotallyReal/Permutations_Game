@@ -28,9 +28,16 @@ public class PermutationPipe : MonoBehaviour
 
     private void Awake()
     {
-        leftLine.positionCount = 2; 
+        leftLine.positionCount = 2;
         linkLine.positionCount = 2;
         rightLine.positionCount = 2;
+    }
+
+    public void SetIdName(string id)
+    {
+        source.name = $"Source {id}";
+        target.name = $"Target {id}";
+        name = $"Pipe {id}";
     }
 
     private void Start()
