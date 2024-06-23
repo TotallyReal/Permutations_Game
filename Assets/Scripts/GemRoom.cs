@@ -55,10 +55,17 @@ public class GemRoom : MonoBehaviour
 
     internal void CreateFrom(PortalApartment.RoomInfo info, PortalApartment.PortalSide side)
     {
-        ShowGems((info.roomIndex + (int)side) % info.order + 1);
+        int newNumberOfGems = (info.roomIndex + (int)side) % info.order + 1;
         if (side == PortalApartment.PortalSide.RIGHT && info.finishRoom)
         {
-            ShowGems(6);                
+            newNumberOfGems = info.order;
         }
+        if (side == PortalApartment.PortalSide.LEFT && info.roomIndex == 0)
+        {
+            newNumberOfGems = 0;
+        }
+
+        ShowGems(newNumberOfGems);
+
     }
 }

@@ -13,6 +13,11 @@ public class PipesRoom : MonoBehaviour
         Color.black, Color.white
     };
 
+    public static Color[] ToColors(Permutation permutation)
+    {
+        return permutation.Select(i => colors[i]).ToArray();
+    }
+
     /*public static Color[] colors = {
         new Color(0.5f, 0, 0),    new Color(0, 0.5f, 0),    new Color(0, 0, 0.5f),
         new Color(0.5f, 0.5f, 0), new Color(0, 0.5f, 0.5f), new Color(0.5f, 0, 0.5f),
@@ -31,17 +36,12 @@ public class PipesRoom : MonoBehaviour
     // logic
     [SerializeField] private bool isStatic = false;
     private Permutation permutation = new Permutation(5);
-    private PermutationWithInput permWithInput;
+    private Permutation input = new Permutation(5);
 
 
     private void Awake()
     {
-
-
-        int size = permutation.size;
-
-        permWithInput = new PermutationWithInput(permutation, new Permutation(size).Output().ToArray());
-        permWithInput.OnInputChanged += PermWithInput_OnInputChanged;
+        int size = permutation.size;        
 
         //int size = permWithInput.size;
         pipes = new PermutationPipe[size];
@@ -60,10 +60,10 @@ public class PipesRoom : MonoBehaviour
 
     private void PermWithInput_OnInputChanged(object sender, EventArgs e)
     {
-        foreach (var (index, pipe) in Enumerable.Zip(permWithInput.GetInput(), pipes, (a, b) => (a, b)))
+        /*foreach (var (index, pipe) in Enumerable.Zip(permWithInput.GetInput(), pipes, (a, b) => (a, b)))
         {
             pipe.SetColor(colors[index]);
-        }
+        }*/
     }
 
     #region ------------- permutation handling -------------
@@ -106,6 +106,11 @@ public class PipesRoom : MonoBehaviour
     public Permutation GetPermutation()
     {
         return permutation;
+    }
+
+    public Permutation GetInput()
+    {
+        return input;
     }
 
     public void UpdatePermutation(Permutation p)
@@ -168,6 +173,27 @@ public class PipesRoom : MonoBehaviour
 
     #endregion
 
+
+    internal void CreateFrom(PortalApartment.RoomInfo info, PortalApartment.PortalSide side)
+    {
+        var input = info.middleInput;
+        switch (side)
+        {
+            case PortalApartment.PortalSide.LEFT:
+                SetRightColors(PipesRoom.ToColors(input));
+                break;
+            case PortalApartment.PortalSide.MIDDLE:
+                SetLeftColors(PipesRoom.ToColors(input));
+                break;
+            case PortalApartment.PortalSide.RIGHT:
+                var output = input * info.permutation.Inverse();
+                SetLeftColors(PipesRoom.ToColors(output));
+                if (info.finishRoom)
+                    UpdatePermutation(new Permutation(5));
+                break;
+        }
+    }
+
     public void CopyRoom(PipesRoom toCopy)
     {
         //TODO: right now only copy color scheme
@@ -175,7 +201,7 @@ public class PipesRoom : MonoBehaviour
     }
 }
 
-public class Permutation
+public class Permutation : IEnumerable<int>
 {
 
     private int[] map;
@@ -235,6 +261,18 @@ public class Permutation
         return inverse[i]; 
     }
 
+    public Permutation Inverse()
+    {
+        Permutation inverseP = new Permutation(size);
+        for (int i = 0;i < size;i++)
+        {
+            int target = this[i];
+            inverseP.map[target] = i;
+            inverseP.inverse[i] = target;
+        }
+        return inverseP;
+    }
+
     public static Permutation operator *(Permutation a, Permutation b)
     {
         if (a.size != b.size)
@@ -268,6 +306,7 @@ public class Permutation
 
         return true;
     }
+
     public static bool operator !=(Permutation a, Permutation b)
     {
         return !(a == b);
@@ -329,6 +368,7 @@ public class Permutation
             yield return this[i];
         }
     }
+
     public IEnumerable<int> InverseOutput()
     {
         for (int i = 0; i < size; i++)
@@ -336,4 +376,18 @@ public class Permutation
             yield return Inverse(i);
         }
     }
+
+    IEnumerator<int> IEnumerable<int>.GetEnumerator()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            yield return this[i];
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return ((IEnumerable<int>)this).GetEnumerator();
+    }
+
 }

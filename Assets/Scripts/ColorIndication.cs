@@ -28,6 +28,18 @@ public class ColorIndication : MonoBehaviour
         }
     }
 
+    public void SetSeparatorsOn(bool[] onValue)
+    {
+        if (onValue == null || onValue.Length != objects.Length)
+            return;
+
+        for (int i = 0; i < onValue.Length; i++)
+        {
+            separators[i].enabled = onValue[i];
+        }
+
+    }
+
     public void SeparateByColor(Color[] colors)
     {
         if (colors == null || colors.Length != objects.Length)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ColorSeparators : MonoBehaviour
@@ -12,34 +13,43 @@ public class ColorSeparators : MonoBehaviour
 
     private void OnEnable()
     {
-        portalApartment.OnRoomIndexChanged += OnRoomIndexCHanged;
+        portalApartment.OnRoomChanged += OnRoomIndexChanged;
         portalApartment.OnApartmentMorphed += OnApartmentMorphed;
     }
 
     private void OnDisable()
     {
-        portalApartment.OnRoomIndexChanged -= OnRoomIndexCHanged;
+        portalApartment.OnRoomChanged -= OnRoomIndexChanged;
         portalApartment.OnApartmentMorphed -= OnApartmentMorphed;
     }
 
-    private void OnRoomIndexCHanged(object sender, int roomIndex)
+    private void OnRoomIndexChanged(object sender, PortalApartment.RoomInfo info)
     {
-        PipesRoom pipesRoom = portalApartment.GetPipesRoom(0);
+        var colorIDs = info.apartmentInput;
 
-        leftColors.SeparateByColor(pipesRoom.GetLeftColors());
-        rightColors.SeparateByColor(pipesRoom.GetRightColors());
+        var input = info.middleInput;
+        var output = info.middleInput * info.permutation.Inverse();
+        leftColors.SetSeparatorsOn(Enumerable.Zip(input, colorIDs, (i, j) => i == j).ToArray());
+        rightColors.SetSeparatorsOn(Enumerable.Zip(output, colorIDs, (i, j) => i == j).ToArray());
     }
 
-    private void OnApartmentMorphed(object sender, System.EventArgs e)
+    private void OnApartmentMorphed(object sender, PortalApartment.RoomInfo info)
     {
-        PipesRoom pipesRoom = portalApartment.GetPipesRoom(0);
+        //PipesRoom pipesRoom = portalApartment.GetPipesRoom(0);
 
-        leftColors.SetColors(pipesRoom.GetLeftColors());
-        rightColors.SetColors(pipesRoom.GetLeftColors());
+        var colorIDs = info.apartmentInput;
+
+        Color[] colors = PipesRoom.ToColors(colorIDs);
+        leftColors.SetColors(colors);
+        rightColors.SetColors(colors);
 
         // TODO: Add maybe "SeparateAll"?
         //       Also, maybe add "Get 0 input" for the apartment, in case this is not the 0 room.
-        leftColors.SeparateByColor(pipesRoom.GetLeftColors());
-        rightColors.SeparateByColor(pipesRoom.GetRightColors());
+        var input = info.middleInput;
+        var output = info.middleInput * info.permutation.Inverse();
+        leftColors.SetSeparatorsOn( Enumerable.Zip(input,  colorIDs, (i, j) => i == j).ToArray());
+        rightColors.SetSeparatorsOn(Enumerable.Zip(output, colorIDs, (i, j) => i == j).ToArray());
+        //leftColors.SeparateByColor(pipesRoom.GetLeftColors());
+        //rightColors.SeparateByColor(pipesRoom.GetRightColors());
     }
 }

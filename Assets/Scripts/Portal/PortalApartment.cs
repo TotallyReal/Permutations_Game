@@ -23,17 +23,12 @@ public class PortalApartment : MonoBehaviour
     private int order;
     private int roomIndex;
     Permutation permutation; // controlls order
-    // Permutation input
+    Permutation middleInput;
+    Permutation apartmentInput;
 
     private void Start()
     {
-        InitializeFromMiddleRoom(middlePipes.GetPermutation());
-    }
-
-    private void AdjustPipeColors()
-    {
-        leftPipes.SetRightColors(middlePipes.GetLeftColors());
-        rightPipes.SetLeftColors(middlePipes.GetRightColors());
+        InitializeApartment(new Permutation(5), new Permutation(5));
     }
 
     private void OnEnable()
@@ -50,7 +45,7 @@ public class PortalApartment : MonoBehaviour
         middlePipes.OnPermutationChanged -= OnPermutationChanged;
     }
 
-    public event EventHandler<int> OnRoomIndexChanged;
+    public event EventHandler<RoomInfo> OnRoomChanged;
 
     private void SetRoomIndex(int newRoomIndex)
     {
@@ -62,48 +57,66 @@ public class PortalApartment : MonoBehaviour
 
         portalToLeft.isActive = !((order == 6) && (roomIndex == 5));
 
-        //AdjustGemRooms();
-        AdjustPipeColors();
-        if ((order == 6) && (roomIndex == 5))
-        {
-            rightPipes.UpdatePermutation(new Permutation(5));
-        }
-
         Debug.Log($"In room {roomIndex}");
-        OnRoomIndexChanged?.Invoke(this, roomIndex);
     }
 
-    public event EventHandler OnApartmentMorphed;
+    public event EventHandler<RoomInfo> OnApartmentMorphed;
 
     private void OnPermutationChanged(object sender, Permutation permutation)
     {
         middleRoom.JoinGems(1, () =>
         {
             this.permutation = permutation;
-            InitializeFromMiddleRoom(permutation);
+            InitializeApartment(middleInput, permutation);
         });
     }
 
-    private void InitializeFromMiddleRoom(Permutation permutation)
+    private void InitializeApartment(Permutation input, Permutation permutation)
     {
+        this.permutation = permutation;
+        this.middleInput = input;
+        this.apartmentInput = input;
         order = permutation.Order();
 
         leftPipes.UpdatePermutation(permutation);
         rightPipes.UpdatePermutation(permutation);
 
         SetRoomIndex(0);
-        leftRoom.ShowGems(0);
-        middleRoom.ShowGems(1);
-        rightRoom.ShowGems((order == 1) ? 1 : 2);
-        OnApartmentMorphed?.Invoke(this, EventArgs.Empty);
+
+        RoomInfo roomInfo = CreateInfo();
+
+        leftPipes.CreateFrom(roomInfo, PortalSide.LEFT);
+        middlePipes.CreateFrom(roomInfo, PortalSide.MIDDLE);
+        rightPipes.CreateFrom(roomInfo, PortalSide.RIGHT);
+
+        leftRoom.CreateFrom(roomInfo, PortalSide.LEFT);
+        middleRoom.CreateFrom(roomInfo, PortalSide.MIDDLE);
+        rightRoom.CreateFrom(roomInfo, PortalSide.RIGHT);
+
+        OnApartmentMorphed?.Invoke(this, roomInfo);
     }
 
     public struct RoomInfo
     {
         public Permutation permutation;
+        public Permutation middleInput; 
+        public Permutation apartmentInput;
         public int order;
         public int roomIndex;
         public bool finishRoom;
+    }
+
+    private RoomInfo CreateInfo()
+    {
+        return new RoomInfo()
+        {
+            permutation = permutation,
+            order = order,
+            roomIndex = roomIndex,
+            finishRoom = (order == 6) && (roomIndex == 5),
+            middleInput = middleInput,
+            apartmentInput = apartmentInput
+        };
     }
 
     public enum PortalSide
@@ -117,37 +130,42 @@ public class PortalApartment : MonoBehaviour
     {
         if (sender == (object)portalToLeft)
         {
-            middlePipes.CopyRoom(rightPipes);
 
 
             // TODO: right now the left and right rooms are determined by the middle one.
             // maybe later will make it more general.
             SetRoomIndex(roomIndex + 1);
-            RoomInfo info = new RoomInfo() { 
-                permutation = permutation, order = order, roomIndex = roomIndex,
-                finishRoom = (order == 6) && (roomIndex == 5)
-            };
+            middleInput = permutation.Inverse() * middleInput;
+            RoomInfo info = CreateInfo();
+
+            leftPipes.CopyRoom(middlePipes);
+            middlePipes.CopyRoom(rightPipes);
+            rightPipes.CreateFrom(info, PortalSide.RIGHT);
 
             leftRoom.CopyRoom(middleRoom);
             middleRoom.CopyRoom(rightRoom);
             rightRoom.CreateFrom(info, PortalSide.RIGHT);
 
+            OnRoomChanged?.Invoke(this, info);
+
             return;
         }
         if (sender == (object)portalToRight)
         {
-            middlePipes.CopyRoom(leftPipes);
 
             SetRoomIndex(roomIndex - 1);
-            RoomInfo info = new RoomInfo()
-            {
-                permutation = permutation, order = order, roomIndex = roomIndex,
-                finishRoom = (order == 6) && (roomIndex == 5)
-            };
+            middleInput = permutation * middleInput;
+            RoomInfo info = CreateInfo();
+
+            rightPipes.CopyRoom(middlePipes);
+            middlePipes.CopyRoom(leftPipes);
+            leftPipes.CreateFrom(info, PortalSide.LEFT);
 
             rightRoom.CopyRoom(middleRoom);
             middleRoom.CopyRoom(leftRoom);
             leftRoom.CreateFrom(info, PortalSide.LEFT);
+
+            OnRoomChanged?.Invoke(this, info);
 
             return;
         }

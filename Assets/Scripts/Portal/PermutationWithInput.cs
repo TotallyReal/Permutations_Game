@@ -9,6 +9,13 @@ public class PermutationWithInput
     private Permutation permutation;
     private int[] input;
 
+    public PermutationWithInput(int size)
+    {
+        size = Mathf.Max(size, 1);
+        permutation = new Permutation(size);
+        input = Enumerable.Range(0,size).ToArray();
+    }
+
     public PermutationWithInput(Permutation permutation, params int[] input)
     {
         // TODO: chane input into another permutation
