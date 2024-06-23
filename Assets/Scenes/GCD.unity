@@ -6793,6 +6793,54 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 63cf82d3c2d199c4dacdc641dc72433f, type: 3}
+--- !u!1 &180728705
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 180728706}
+  - component: {fileID: 180728707}
+  m_Layer: 0
+  m_Name: Color separators
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &180728706
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180728705}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 349885056}
+  - {fileID: 1652275848}
+  m_Father: {fileID: 1954757724}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &180728707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180728705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9493c2d633a17143b9018a64335f357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalApartment: {fileID: 1954757725}
+  leftColors: {fileID: 349885057}
+  rightColors: {fileID: 1652275847}
 --- !u!1 &181614156
 GameObject:
   m_ObjectHideFlags: 0
@@ -13715,7 +13763,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 349885055}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.5, y: -3.5100002, z: 0}
+  m_LocalPosition: {x: -9.5, y: -3.5100021, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 50476757}
@@ -13728,8 +13776,8 @@ Transform:
   - {fileID: 1710524984}
   - {fileID: 1453000528}
   - {fileID: 2064847463}
-  m_Father: {fileID: 1954757724}
-  m_RootOrder: 5
+  m_Father: {fileID: 180728706}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &349885057
 MonoBehaviour:
@@ -23797,7 +23845,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  permutationString: (1,2,3)(4,5)(6)
   pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
   heightDiff: 0.5
   widthLeft: 6
@@ -57744,7 +57791,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.9384942, y: 1}
+    m_SensorSize: {x: 2.3984272, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -58113,7 +58160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  permutationString: (1,2,3)(4,5)(6)
   pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
   heightDiff: 0.5
   widthLeft: 6
@@ -61554,7 +61600,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1652275846}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.5, y: -3.5100002, z: 0}
+  m_LocalPosition: {x: 6.5, y: -3.5100021, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1008775948}
@@ -61567,8 +61613,8 @@ Transform:
   - {fileID: 1885120997}
   - {fileID: 303568786}
   - {fileID: 967524633}
-  m_Father: {fileID: 1954757724}
-  m_RootOrder: 6
+  m_Father: {fileID: 180728706}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1652727667
 GameObject:
@@ -63080,7 +63126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  permutationString: (1,2,3)(4,5)(6)
   pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
   heightDiff: 0.5
   widthLeft: 6
@@ -70415,7 +70460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  permutationString: (1,2,3)(4,5)(6)
   pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
   heightDiff: 0.5
   widthLeft: 6
@@ -71135,8 +71179,7 @@ Transform:
   - {fileID: 762274458}
   - {fileID: 1927647341}
   - {fileID: 1740977773}
-  - {fileID: 349885056}
-  - {fileID: 1652275848}
+  - {fileID: 180728706}
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -71158,8 +71201,6 @@ MonoBehaviour:
   leftRoom: {fileID: 245932626}
   middleRoom: {fileID: 1218939613}
   rightRoom: {fileID: 1671743935}
-  leftColors: {fileID: 349885057}
-  rightColors: {fileID: 1652275847}
   portalToLeft: {fileID: 1920776097}
   portalToRight: {fileID: 1936045}
 --- !u!1 &1964488765
@@ -72574,7 +72615,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  permutationString: (1,2,3)(4,5)(6)
   pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
   heightDiff: 0.5
   widthLeft: 6

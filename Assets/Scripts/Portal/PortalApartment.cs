@@ -19,36 +19,21 @@ public class PortalApartment : MonoBehaviour
     [SerializeField] private Portal portalToLeft;
     [SerializeField] private Portal portalToRight;
 
+    // the rooms information
     private int order;
     private int roomIndex;
+    Permutation permutation; // controlls order
+    // Permutation input
 
     private void Start()
     {
-        Permutation permutation = middlePipes.GetPermutation();
-        order = permutation.Order();
-        SetRoomIndex(0);
-        OnApartmentMorphed?.Invoke(this, EventArgs.Empty);
+        InitializeFromMiddleRoom(middlePipes.GetPermutation());
     }
 
     private void AdjustPipeColors()
     {
         leftPipes.SetRightColors(middlePipes.GetLeftColors());
         rightPipes.SetLeftColors(middlePipes.GetRightColors());
-    }
-
-    private void AdjustGemRooms()
-    {
-        if (roomIndex == 0)
-        {
-            middleRoom.ShowGems(1);
-            leftRoom.ShowGems(0);
-            rightRoom.ShowGems((order == 1) ? 1 : 2);
-        } else
-        {
-            leftRoom.ShowGems((roomIndex - 1) % order + 1);
-            middleRoom.ShowGems(roomIndex % order + 1);
-            rightRoom.ShowGems((roomIndex + 1) % order + 1);
-        }
     }
 
     private void OnEnable()
@@ -77,11 +62,10 @@ public class PortalApartment : MonoBehaviour
 
         portalToLeft.isActive = !((order == 6) && (roomIndex == 5));
 
-        AdjustGemRooms();
+        //AdjustGemRooms();
         AdjustPipeColors();
         if ((order == 6) && (roomIndex == 5))
         {
-            rightRoom.ShowGems(6);
             rightPipes.UpdatePermutation(new Permutation(5));
         }
 
@@ -95,14 +79,38 @@ public class PortalApartment : MonoBehaviour
     {
         middleRoom.JoinGems(1, () =>
         {
-            order = permutation.Order();
-            middleRoom.ShowGems(1);
-            leftPipes.UpdatePermutation(permutation);
-            rightPipes.UpdatePermutation(permutation);
-
-            SetRoomIndex(0);
-            OnApartmentMorphed?.Invoke(this, EventArgs.Empty);
+            this.permutation = permutation;
+            InitializeFromMiddleRoom(permutation);
         });
+    }
+
+    private void InitializeFromMiddleRoom(Permutation permutation)
+    {
+        order = permutation.Order();
+
+        leftPipes.UpdatePermutation(permutation);
+        rightPipes.UpdatePermutation(permutation);
+
+        SetRoomIndex(0);
+        leftRoom.ShowGems(0);
+        middleRoom.ShowGems(1);
+        rightRoom.ShowGems((order == 1) ? 1 : 2);
+        OnApartmentMorphed?.Invoke(this, EventArgs.Empty);
+    }
+
+    public struct RoomInfo
+    {
+        public Permutation permutation;
+        public int order;
+        public int roomIndex;
+        public bool finishRoom;
+    }
+
+    public enum PortalSide
+    {
+        LEFT = -1, 
+        MIDDLE = 0, 
+        RIGHT = 1
     }
 
     private void OnPortal(object sender, Vector3 v)
@@ -110,19 +118,37 @@ public class PortalApartment : MonoBehaviour
         if (sender == (object)portalToLeft)
         {
             middlePipes.CopyRoom(rightPipes);
-            middleRoom.CopyRoom(rightRoom);
+
+
             // TODO: right now the left and right rooms are determined by the middle one.
             // maybe later will make it more general.
             SetRoomIndex(roomIndex + 1);
+            RoomInfo info = new RoomInfo() { 
+                permutation = permutation, order = order, roomIndex = roomIndex,
+                finishRoom = (order == 6) && (roomIndex == 5)
+            };
+
+            leftRoom.CopyRoom(middleRoom);
+            middleRoom.CopyRoom(rightRoom);
+            rightRoom.CreateFrom(info, PortalSide.RIGHT);
 
             return;
         }
         if (sender == (object)portalToRight)
         {
             middlePipes.CopyRoom(leftPipes);
-            middleRoom.CopyRoom(leftRoom);
 
             SetRoomIndex(roomIndex - 1);
+            RoomInfo info = new RoomInfo()
+            {
+                permutation = permutation, order = order, roomIndex = roomIndex,
+                finishRoom = (order == 6) && (roomIndex == 5)
+            };
+
+            rightRoom.CopyRoom(middleRoom);
+            middleRoom.CopyRoom(leftRoom);
+            leftRoom.CreateFrom(info, PortalSide.LEFT);
+
             return;
         }
     }

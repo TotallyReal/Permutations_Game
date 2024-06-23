@@ -53,4 +53,12 @@ public class GemRoom : MonoBehaviour
         sequence.OnComplete(onComplete);
     }
 
+    internal void CreateFrom(PortalApartment.RoomInfo info, PortalApartment.PortalSide side)
+    {
+        ShowGems((info.roomIndex + (int)side) % info.order + 1);
+        if (side == PortalApartment.PortalSide.RIGHT && info.finishRoom)
+        {
+            ShowGems(6);                
+        }
+    }
 }

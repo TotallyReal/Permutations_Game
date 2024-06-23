@@ -38,6 +38,7 @@ public class ColorSeparators : MonoBehaviour
         rightColors.SetColors(pipesRoom.GetLeftColors());
 
         // TODO: Add maybe "SeparateAll"?
+        //       Also, maybe add "Get 0 input" for the apartment, in case this is not the 0 room.
         leftColors.SeparateByColor(pipesRoom.GetLeftColors());
         rightColors.SeparateByColor(pipesRoom.GetRightColors());
     }
