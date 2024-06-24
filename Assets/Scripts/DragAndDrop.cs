@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+// Should have a collider
 public class DragAndDrop : MonoBehaviour
 {
 

@@ -44,12 +44,9 @@ public class ColorSeparators : MonoBehaviour
         rightColors.SetColors(colors);
 
         // TODO: Add maybe "SeparateAll"?
-        //       Also, maybe add "Get 0 input" for the apartment, in case this is not the 0 room.
         var input = info.middleInput;
         var output = info.middleInput * info.permutation.Inverse();
         leftColors.SetSeparatorsOn( Enumerable.Zip(input,  colorIDs, (i, j) => i == j).ToArray());
         rightColors.SetSeparatorsOn(Enumerable.Zip(output, colorIDs, (i, j) => i == j).ToArray());
-        //leftColors.SeparateByColor(pipesRoom.GetLeftColors());
-        //rightColors.SeparateByColor(pipesRoom.GetRightColors());
     }
 }

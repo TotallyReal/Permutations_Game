@@ -35,14 +35,19 @@ public class PortalApartment : MonoBehaviour
     {
         portalToLeft.Portaled += OnPortal;
         portalToRight.Portaled += OnPortal;
-        middlePipes.OnPermutationChanged += OnPermutationChanged;
+        middlePipes.OnInnerPermutationChanged += OnPermutationChanged;
     }
 
     private void OnDisable()
     {
         portalToLeft.Portaled -= OnPortal;
         portalToRight.Portaled -= OnPortal;
-        middlePipes.OnPermutationChanged -= OnPermutationChanged;
+        middlePipes.OnInnerPermutationChanged -= OnPermutationChanged;
+    }
+
+    private void OnPermutationChanged(object sender, Permutation permutation)
+    {
+        middleRoom.JoinGems(1, () => InitializeApartment(middleInput, permutation));
     }
 
     public event EventHandler<RoomInfo> OnRoomChanged;
@@ -62,14 +67,6 @@ public class PortalApartment : MonoBehaviour
 
     public event EventHandler<RoomInfo> OnApartmentMorphed;
 
-    private void OnPermutationChanged(object sender, Permutation permutation)
-    {
-        middleRoom.JoinGems(1, () =>
-        {
-            this.permutation = permutation;
-            InitializeApartment(middleInput, permutation);
-        });
-    }
 
     private void InitializeApartment(Permutation input, Permutation permutation)
     {

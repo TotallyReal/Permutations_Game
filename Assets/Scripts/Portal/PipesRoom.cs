@@ -68,7 +68,8 @@ public class PipesRoom : MonoBehaviour
 
     #region ------------- permutation handling -------------
 
-    public event EventHandler<Permutation> OnPermutationChanged;
+    // Called when the permutation changes from the drag and drop mechanism
+    public event EventHandler<Permutation> OnInnerPermutationChanged;
 
     private void OnEndDragging(object sender, Vector2 position)
     {
@@ -94,7 +95,9 @@ public class PipesRoom : MonoBehaviour
         {
             Permutation transposition = Permutation.Cycle(n, targetId, secondTargetId);
             int secondSourceId = permutation.Inverse(secondTargetId);
-            UpdatePermutation(transposition * permutation);
+            Permutation newPermutation = transposition * permutation;
+            UpdatePermutation(newPermutation);
+            OnInnerPermutationChanged?.Invoke(this, newPermutation);
         }
         else
         {
@@ -121,8 +124,6 @@ public class PipesRoom : MonoBehaviour
         permutation = p;
 
         UpdateVisualComponent(permutation);
-
-        OnPermutationChanged?.Invoke(this, p);
     }
 
     private void UpdateVisualComponent(Permutation permutation)
