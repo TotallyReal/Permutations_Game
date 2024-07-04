@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class PipesRoom : MonoBehaviour
 {
@@ -240,6 +243,45 @@ public class Permutation : IEnumerable<int>
         return p;
     }
 
+    public static Permutation FromString(int size, string permString)
+    {
+        Assert.IsTrue(size >= 1);
+
+        // Remove all whitespace from the input
+        permString = Regex.Replace(permString, @"\s+", "");
+
+        // Check if the input matches the expected format
+        if (!Regex.IsMatch(permString, @"^(\(\d+(,\d+)*\))*$"))
+        {
+            throw new ArgumentException("Invalid permutation string format");
+        }
+
+        List<List<int>> cycles = new List<List<int>>();
+
+        // Split the input into individual cycles
+        string[] cycleStrings = permString.Split(')');
+
+        // Remove the last empty string that results from splitting
+        Array.Resize(ref cycleStrings, cycleStrings.Length - 1);
+
+        Permutation p = new Permutation(size);
+        foreach (string cycleString in cycleStrings)
+        {
+            // Remove the opening parenthesis and split by comma
+            string[] elements = cycleString.Trim('(').Split(',');
+
+            int[] cycleNumbers = cycleString.Trim('(').Split(',').Select(str => int.Parse(str)).ToArray();
+
+            if (cycleNumbers.Any(i => (i < 0 || size <= i)))
+            {
+                throw new ArgumentException($"Invalid number in permutation string {permString} on {size} elements.");
+            }
+            p *= Permutation.Cycle(size, cycleNumbers);
+        }
+
+        return p;
+    }
+
     public Permutation(int n)
     {
         size = Mathf.Max(1, n);
@@ -313,6 +355,29 @@ public class Permutation : IEnumerable<int>
         return !(a == b);
     }
 
+    /// <summary>
+    /// Given a permutation sig:[n]->[n], returns a new permuttation tau:[size]->[size]
+    /// such that tau[i+k] = sig[i]+k for i=0,...,n-1, and tau is the identity everywhere else
+    /// </summary>
+    /// <param name="p"></param>
+    /// <param name="k"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    public Permutation TranslateUp(int k, int size)
+    {
+        if (this.size + k > size)
+        {
+            throw new Exception("Cannot translate up the permutation");
+        }
+        Permutation tau = new Permutation(size);
+        for(int i = 0; i < this.size; i++)
+        {
+            tau.map[i + k] = this[i] + k;
+            tau.inverse[this[i] + k] = i + k;
+        }
+        return tau;
+    }
+
     public bool IsIdentity()
     {
         for (int i = 0; i < size; i++)
@@ -336,6 +401,19 @@ public class Permutation : IEnumerable<int>
         return order;
     }
 
+    public int CrossingNumber()
+    {
+        int number = 0;
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = i+1; j < size; j++)
+            {
+                if (this[i] > this[j])
+                    number++;
+            }
+        }
+        return number;
+    }
     override public String ToString()
     {
         bool[] used = new bool[size];

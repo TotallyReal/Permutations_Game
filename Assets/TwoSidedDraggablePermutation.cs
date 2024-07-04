@@ -1,39 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(PermutationLines))]
 public class TwoSidedDraggablePermutation : MonoBehaviour
 {
-
-    [SerializeField] private DragablePermutation left;
+    // x position, height, getPermutation, positionChanged, permutation changed
+    [SerializeField] private DragablePermutation left; 
     [SerializeField] private DragablePermutation right;
-    [SerializeField] private Transform linesParent;
-    [SerializeField] private LineRenderer linePrefab;
-    [SerializeField] private int size;
+    private PermutationLines lines;
 
-    private Permutation permutation;
-    private LineRenderer[] lines;
+    private Permutation id;
 
-    private float leftX, leftHeight, rightX, rightHeight;
-
-    void Awake()
+    private void Awake()
     {
-        lines = new LineRenderer[size];
-
-        leftX = left.transform.localPosition.x;
-        leftHeight = left.GetHeightDiff();
-        rightX = right.transform.localPosition.x;
-        rightHeight = right.GetHeightDiff();
-
-        for (int i = 0; i < lines.Length; i++)
-        {
-            lines[i] = Instantiate(linePrefab, linesParent);
-            lines[i].name = $"line {i}";
-            lines[i].transform.localPosition = Vector3.zero;
-            lines[i].positionCount = 2;
-
-        }
-
+        lines = GetComponent<PermutationLines>();
+        id = new Permutation(lines.GetSize());
     }
 
     private void Start()
@@ -43,43 +27,58 @@ public class TwoSidedDraggablePermutation : MonoBehaviour
 
     private void UpdatePermutation()
     {
-        permutation = right.GetPermutation() * left.GetPermutation().Inverse();
-        Permutation leftP = left.GetPermutation();
-        Permutation rightP = right.GetPermutation();
+        Permutation leftP = (left != null) ? left.GetPermutation() : id;
+        Permutation rightP = (right != null) ? right.GetPermutation() : id;
+        lines.UpdatePermutation(rightP * leftP.Inverse());
+    }
 
-        for (int i = 0; i < lines.Length; i++)
-        {
-            // The i-th line is of the form left[i] -> right[i]
-            lines[i].SetPosition(0, new Vector3(leftX, leftP[i] * leftHeight, 0));
-            lines[i].SetPosition(1, new Vector3(rightX, rightP[i] * leftHeight, 0));
-        }
-
+    public void SetConnectors(DragablePermutation left, DragablePermutation right)
+    {
+        this.enabled = false;
+        // TODO: is OnDisabled called before the next line?
+        this.left = left;
+        this.right = right;
+        this.enabled = true;
     }
 
     private void OnEnable()
     {
-        right.OnPositionChanged += Right_OnDragging;
-        right.OnEndDragging += OnEndDragging;
-        left.OnPositionChanged += Left_OnDragging;
-        left.OnEndDragging += OnEndDragging;
+        if (right != null)
+        {
+            right.OnPositionChanged += Right_OnDragging;
+            right.OnEndDragging += OnEndDragging;
+        }
+        if (left != null)
+        {
+            left.OnPositionChanged += Left_OnDragging;
+            left.OnEndDragging += OnEndDragging;
+        }
     }
 
     private void OnDisable()
     {
-        right.OnPositionChanged -= Right_OnDragging;
-        right.OnEndDragging -= OnEndDragging;
-        left.OnPositionChanged -= Left_OnDragging;
-        left.OnEndDragging -= OnEndDragging;
+        if (right != null)
+        {
+            right.OnPositionChanged -= Right_OnDragging;
+            right.OnEndDragging -= OnEndDragging;
+        }
+        if (left != null)
+        {
+            left.OnPositionChanged -= Left_OnDragging;
+            left.OnEndDragging -= OnEndDragging;
+        }
     }
 
     private void Left_OnDragging(object sender, DragablePermutation.DraggingArgs args)
     {
-        lines[args.index].SetPosition(0, transform.InverseTransformPoint(args.position));
+        lines.SetEndPoint(left: true, index: args.positionIndex, position: args.position);
+        //lines[args.index].SetPosition(0, transform.InverseTransformPoint(args.position));
     }
 
     private void Right_OnDragging(object sender, DragablePermutation.DraggingArgs args)
     {
-        lines[args.index].SetPosition(1, transform.InverseTransformPoint(args.position));
+        lines.SetEndPoint(left: false, index: args.positionIndex, position: args.position);
+        //lines[args.index].SetPosition(1, transform.InverseTransformPoint(args.position));
     }
 
     private void OnEndDragging(object sender, DragablePermutation.EndDraggingArgs args)
@@ -87,9 +86,4 @@ public class TwoSidedDraggablePermutation : MonoBehaviour
         UpdatePermutation();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

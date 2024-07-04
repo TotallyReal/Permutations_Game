@@ -10,7 +10,7 @@ public class DragAndDrop : MonoBehaviour
 
     private Vector3 lastPosition;
     private bool isDragging = false;
-    private bool dragIsActive { get; set; } = true;
+    public bool dragIsActive { get; set; } = true;
     PlayerInput input;
 
     private void Awake()
@@ -31,18 +31,22 @@ public class DragAndDrop : MonoBehaviour
         input.Player.MouseSelect.canceled += MouseSelect_canceled;
     }
 
-
+    public event EventHandler<Vector2> OnPressed;
     public event EventHandler<Vector2> OnStartDragging;
     public event EventHandler<Vector2> OnDragging;
     public event EventHandler<Vector2> OnEndDragging;
 
     private void Instance_OnObjectPressed(object sender, Transform obj)
     {
-        if (dragIsActive && obj == transform)
+        lastPosition = RaycastSelector2D.Instance.MousePositionWorld();
+        if (obj == transform)
         {
-            lastPosition = RaycastSelector2D.Instance.MousePositionWorld();
-            isDragging = true;
-            OnStartDragging?.Invoke(this, lastPosition);
+            OnPressed?.Invoke(this, lastPosition);
+            if (dragIsActive)
+            {
+                isDragging = true;
+                OnStartDragging?.Invoke(this, lastPosition);
+            }
         }
     }
 
