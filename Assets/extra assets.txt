@@ -1,3 +1,4 @@
-Extra Assets not contained in the git repository:
+Extra assets and plugins not contained in the git repository:
 
 1. Sunny land Artwork
+2. DoTween
