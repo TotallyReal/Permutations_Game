@@ -35,8 +35,8 @@ public class NotePlayer : MonoBehaviour
     void Start()
     {
         audioSource = gameObject.AddComponent<AudioSource>();
-        StartCoroutine(WheelManager.Instance.AddPulse((counter) => { audioSource.PlayOneShot(notes[60 - 48]); return true; }, 0.8f, -1));
-        StartCoroutine(WheelManager.Instance.AddPulse((counter) => { audioSource.PlayOneShot(notes[65 - 48]); return true; }, 0.6f, -1));
+        StartCoroutine(CogManager.Instance.AddPulse((counter) => { audioSource.PlayOneShot(notes[60 - 48]); return true; }, 0.8f, -1));
+        StartCoroutine(CogManager.Instance.AddPulse((counter) => { audioSource.PlayOneShot(notes[65 - 48]); return true; }, 0.6f, -1));
     }
 
     private void Pulse()

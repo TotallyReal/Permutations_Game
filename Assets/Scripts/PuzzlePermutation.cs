@@ -151,7 +151,7 @@ public class PuzzlePermutation : MonoBehaviour
     {
         for (int i = 0; i < size; i++)
         {
-            if (targets[i] == sender)
+            if ((object) targets[i] == sender)
             {
                 int targetId = links[i].targetId;
                 Vector2 localPosition = transform.worldToLocalMatrix.MultiplyPoint3x4(position);

@@ -6,7 +6,7 @@ using UnityEngine;
 public class PermutationBall : MonoBehaviour
 {
 
-    [SerializeField] private SpriteRenderer renderer;
+    [SerializeField] private SpriteRenderer ballRenderer;
     [SerializeField] private TextMeshProUGUI textNumber;
     [SerializeField] private int number;
 

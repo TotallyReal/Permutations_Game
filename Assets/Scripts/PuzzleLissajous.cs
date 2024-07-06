@@ -57,8 +57,8 @@ public class PuzzleLissajous : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        leftCog.SetAngle(WheelManager.Time() * 360 * rotPerSec * leftCog.GetNumerOfTeeth());
-        rightCog.SetAngle(WheelManager.Time() * 360 * rotPerSec * rightCog.GetNumerOfTeeth());
+        leftCog.SetAngle(CogManager.Time() * 360 * rotPerSec * leftCog.GetNumerOfTeeth());
+        rightCog.SetAngle(CogManager.Time() * 360 * rotPerSec * rightCog.GetNumerOfTeeth());
 
         float rightAngle = rightCog.GetAngle() * Mathf.PI / 180;
         Vector3 rightCoords = rightCog.transform.position + new Vector3(-Mathf.Sin(rightAngle), Mathf.Cos(rightAngle), -5);

@@ -5,11 +5,11 @@ using UnityEngine;
 public class Tooth : MonoBehaviour
 {
 
-    [SerializeField] private SpriteRenderer renderer;
+    [SerializeField] private SpriteRenderer toothRenderer;
 
     
     public void SetColor(Color color)
     {
-        renderer.color = color;
+        toothRenderer.color = color;
     }
 }

@@ -160,7 +160,7 @@ public class CogLink : MonoBehaviour
         L2 = teeth2 / gcdValue;
         float phaseDiff = phase_diff/(float)360;
 
-        linkCoroutine = StartCoroutine(WheelManager.Instance.AddPeriodicPulse(
+        linkCoroutine = StartCoroutine(CogManager.Instance.AddPeriodicPulse(
             Linked, gcdValue, (float)1 / gcdValue, phaseDiff));
         OnLinkStarted?.Invoke(this, EventArgs.Empty);
     }
@@ -326,13 +326,13 @@ public class CogLink : MonoBehaviour
             /*float rps = (float)cog1.GetRotationsPerSec();
             float phase = (float)(Cog.Phase.RIGHT.GetFraction() - cog1.GetPhase().GetFraction()) / rps;
             int sign = rps>0 ? 1 : -1;
-            linkCoroutine = StartCoroutine(WheelManager.Instance.AddPeriodicPulse(
+            linkCoroutine = StartCoroutine(CogManager.Instance.AddPeriodicPulse(
                 Linked, gcdValue, sign / (gcdValue * rps), sign * phase));*/
 
             //float rps = (float)cog1.GetRotationsPerSec();
             int rotDir = cog1.antiClockwiseDir;
             float phase2 = (float)(Cog.Phase.RIGHT.GetFraction() - cog1.GetPhase().GetFraction()) / rotDir;
-            linkCoroutine = StartCoroutine(WheelManager.Instance.AddPeriodicPulse(
+            linkCoroutine = StartCoroutine(CogManager.Instance.AddPeriodicPulse(
                 Linked, gcdValue, (float)1 / gcdValue, rotDir * phase2));
 
 

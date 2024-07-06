@@ -90,7 +90,7 @@ public class PuzzleLCM : MonoBehaviour
         {
             ResetLocks();
             //Debug.Log("3. Reseted locks");
-            lockMechanismCoroutine = StartCoroutine(WheelManager.Instance.AddPulse2(UseLock, secPerLock, -1, coroutineID++));
+            lockMechanismCoroutine = StartCoroutine(CogManager.Instance.AddPulse2(UseLock, secPerLock, -1, coroutineID++));
         }
     }
 

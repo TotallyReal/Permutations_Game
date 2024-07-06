@@ -33,6 +33,20 @@ public class PermutationLines : MonoBehaviour
 
     virtual protected void Awake()
     {
+        SetSize(size);
+    }
+
+    public void SetSize(int size)
+    {
+        if (size <= 0)
+            return;
+
+        if (lines != null)
+        {
+            foreach (LineRenderer line in lines)
+                Destroy(line.gameObject);
+        }
+
         permutation = Permutation.FromString(size, permString);
         lines = new LineRenderer[size];
         for (int i = 0; i < size; i++)
@@ -43,7 +57,7 @@ public class PermutationLines : MonoBehaviour
 
         if (TryGetComponent<BoxCollider2D>(out BoxCollider2D collider))
         {
-            collider.offset = new Vector2(width/2, (size - 1) * heightDiff / 2);
+            collider.offset = new Vector2(width / 2, (size - 1) * heightDiff / 2);
             collider.size = new Vector2(width, size * heightDiff);
         }
     }
@@ -111,5 +125,11 @@ public class PermutationLines : MonoBehaviour
         }
     }
 
+    public void SetDimension(float width, float heightDiff)
+    {
+        this.heightDiff = heightDiff;
+        this.width = width;
+        SetSize(size);
+    }
 
 }

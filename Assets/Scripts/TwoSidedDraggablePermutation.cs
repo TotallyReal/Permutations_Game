@@ -22,14 +22,14 @@ public class TwoSidedDraggablePermutation : MonoBehaviour
 
     private void Start()
     {
-        UpdatePermutation();
+        //UpdatePermutation();
     }
 
     private void UpdatePermutation()
     {
-        Permutation leftP = (left != null) ? left.GetPermutation() : id;
-        Permutation rightP = (right != null) ? right.GetPermutation() : id;
-        lines.UpdatePermutation(rightP * leftP.Inverse());
+        //Permutation leftP = (left != null) ? left.GetPermutation() : id;
+        //Permutation rightP = (right != null) ? right.GetPermutation() : id;
+        //lines.UpdatePermutation(rightP * leftP.Inverse());
     }
 
     public void SetConnectors(DragablePermutation left, DragablePermutation right)
@@ -46,12 +46,12 @@ public class TwoSidedDraggablePermutation : MonoBehaviour
         if (right != null)
         {
             right.OnPositionChanged += Right_OnDragging;
-            right.OnEndDragging += OnEndDragging;
+            right.OnEndDragging += OnRightEndDragging;
         }
         if (left != null)
         {
             left.OnPositionChanged += Left_OnDragging;
-            left.OnEndDragging += OnEndDragging;
+            left.OnEndDragging += OnLeftEndDragging;
         }
     }
 
@@ -60,12 +60,12 @@ public class TwoSidedDraggablePermutation : MonoBehaviour
         if (right != null)
         {
             right.OnPositionChanged -= Right_OnDragging;
-            right.OnEndDragging -= OnEndDragging;
+            right.OnEndDragging -= OnRightEndDragging;
         }
         if (left != null)
         {
             left.OnPositionChanged -= Left_OnDragging;
-            left.OnEndDragging -= OnEndDragging;
+            left.OnEndDragging -= OnLeftEndDragging;
         }
     }
 
@@ -81,9 +81,15 @@ public class TwoSidedDraggablePermutation : MonoBehaviour
         //lines[args.index].SetPosition(1, transform.InverseTransformPoint(args.position));
     }
 
-    private void OnEndDragging(object sender, DragablePermutation.EndDraggingArgs args)
+    private void OnLeftEndDragging(object sender, DragablePermutation.EndDraggingArgs args)
     {
-        UpdatePermutation();
+        lines.UpdatePermutation(lines.GetPermutation() * args.transposition);
+        //UpdatePermutation();
+    }
+
+    private void OnRightEndDragging(object sender, DragablePermutation.EndDraggingArgs args)
+    {
+        lines.UpdatePermutation(args.transposition * lines.GetPermutation());
     }
 
 }

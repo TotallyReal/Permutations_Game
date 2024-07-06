@@ -137,8 +137,8 @@ public class Cog : MonoBehaviour
     {
         if (isRotating)        
         {
-            //SetAngle(WheelManager.Time() * 360 * rotationPerSec.Value() + (ushort)phase);
-            SetAngle(WheelManager.Time() * 360 * antiClockwiseDir + (ushort)phase);
+            //SetAngle(CogManager.Time() * 360 * rotationPerSec.Value() + (ushort)phase);
+            SetAngle(CogManager.Time() * 360 * antiClockwiseDir + (ushort)phase);
             // TODO: only works with global time. Consider adding local time
         }
 

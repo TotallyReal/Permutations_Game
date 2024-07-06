@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static WheelManager;
+using static CogManager;
 
 /// <summary>
 /// Used to keep synchronized time for many objects, and emit pulses according to this timer.

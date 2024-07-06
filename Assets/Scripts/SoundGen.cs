@@ -28,7 +28,7 @@ public class SoundGen : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(WheelManager.Instance.AddPulse((counter) => { Pulse(); return true; }, 1f, -1));
+        StartCoroutine(CogManager.Instance.AddPulse((counter) => { Pulse(); return true; }, 1f, -1));
         OnKey(25);
     }
 

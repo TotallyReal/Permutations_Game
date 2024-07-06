@@ -44,13 +44,13 @@ public class PuzzleGCD : MonoBehaviour
         if (sparkCoroutine == null)
         {
             gcdValue = GCD(rightCog.GetNumerOfTeeth(), leftCog.GetNumerOfTeeth());
-            float angle = WheelManager.Time() * 360 * rotationPerSec;
+            float angle = CogManager.Time() * 360 * rotationPerSec;
             angle %= 360;
             angle /= 360;
 
             counter = Mathf.FloorToInt(angle * gcdValue); // TODO : fix counter 
             RelockAll();
-            sparkCoroutine = StartCoroutine(WheelManager.Instance.AddPulse(Spark, 1 / (gcdValue * rotationPerSec), -1));
+            sparkCoroutine = StartCoroutine(CogManager.Instance.AddPulse(Spark, 1 / (gcdValue * rotationPerSec), -1));
         }
     }
 
@@ -147,7 +147,7 @@ public class PuzzleGCD : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        leftCog.SetAngle(- WheelManager.Time() * 360 * rotationPerSec - 90);
-        rightCog.SetAngle(WheelManager.Time() * 360 * rotationPerSec + 90);
+        leftCog.SetAngle(- CogManager.Time() * 360 * rotationPerSec - 90);
+        rightCog.SetAngle(CogManager.Time() * 360 * rotationPerSec + 90);
     }
 }

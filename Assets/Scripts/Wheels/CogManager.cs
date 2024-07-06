@@ -4,10 +4,10 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 [RequireComponent(typeof(Timer))]
-public class WheelManager : MonoBehaviour
+public class CogManager : MonoBehaviour
 {
 
-    public static WheelManager Instance;
+    public static CogManager Instance;
     private float t = 0;
 
     private Timer timer;

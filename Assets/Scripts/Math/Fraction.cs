@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 // TODO: consider making this class into a struct
 [Serializable]
@@ -83,6 +84,9 @@ public class Fraction
 
     public void Reduce()
     {
+        int sign = (denominator > 0) ? 1 : -1;
+        numerator *= sign;
+        denominator *= sign;
         int gcdValue = GCD(numerator, denominator);
         if (gcdValue > 0)
         {
@@ -171,19 +175,30 @@ public class Fraction
         return a.numerator * b.denominator - b.numerator * a.denominator == 0;
     }
 
-    public static bool operator ==(Fraction a, int b)
-    {
-        return a.numerator - b * a.denominator == 0;
-    }
-
-    public static bool operator ==(int b, Fraction a)
-    {
-        return a.numerator - b * a.denominator == 0;
-    }
-
     public static bool operator !=(Fraction a, Fraction b)
     {
         return a.numerator * b.denominator - b.numerator * a.denominator != 0;
+    }
+
+    public override bool Equals(object other)
+    {
+        if (other is null)
+            return false;
+
+        Fraction q = other as Fraction;
+        return (!(other is null) &&
+            (numerator * q.denominator - numerator * q.denominator) == 0);
+    }
+
+    public override int GetHashCode()
+    {
+        Reduce();
+        return (numerator, denominator).GetHashCode();
+    }
+
+    public static bool operator ==(Fraction a, int b)
+    {
+        return a.numerator - b * a.denominator == 0;
     }
 
     public static bool operator !=(Fraction a, int b)
@@ -191,10 +206,16 @@ public class Fraction
         return a.numerator - b * a.denominator != 0;
     }
 
+    public static bool operator ==(int b, Fraction a)
+    {
+        return a.numerator - b * a.denominator == 0;
+    }
+
     public static bool operator !=(int b, Fraction a)
     {
         return a.numerator - b * a.denominator != 0;
     }
+
 
     #endregion
 
