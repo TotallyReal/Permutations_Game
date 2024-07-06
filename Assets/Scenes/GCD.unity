@@ -12859,7 +12859,7 @@ GameObject:
   m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &259599221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12892,24 +12892,29 @@ MonoBehaviour:
   widths: []
   heightDiff: 0
   draggablePermutationPrefab: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
-  connectionTypes: 000000000100000000000000000000000000000000000000
   connectionData:
-  - connectLeft: 0
+  - show: 1
+    connectLeft: 0
     connectRight: 1
     active: 0
-  - connectLeft: 1
+  - show: 1
+    connectLeft: 1
+    connectRight: 1
+    active: 1
+  - show: 1
+    connectLeft: 1
+    connectRight: 1
+    active: 1
+  - show: 1
+    connectLeft: 1
+    connectRight: 1
+    active: 1
+  - show: 1
+    connectLeft: 1
     connectRight: 0
     active: 1
-  - connectLeft: 1
-    connectRight: 1
-    active: 1
-  - connectLeft: 1
-    connectRight: 1
-    active: 1
-  - connectLeft: 1
-    connectRight: 1
-    active: 1
-  - connectLeft: 1
+  - show: 1
+    connectLeft: 1
     connectRight: 0
     active: 1
 --- !u!4 &259599222
@@ -24234,6 +24239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 762274458}
   - component: {fileID: 762274459}
+  - component: {fileID: 762274460}
   m_Layer: 0
   m_Name: Permutation Lines Left
   m_TagString: Untagged
@@ -24276,6 +24282,47 @@ MonoBehaviour:
   widthPermutation: 4
   widthRight: 6
   isStatic: 1
+--- !u!114 &762274460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762274457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28190871791673749849419c3190be71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  permutationSize: 5
+  generateFromExistingObjects: 0
+  lines: []
+  connections: []
+  permutationLinePrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
+  linePermutationCount: 3
+  widths:
+  - 6
+  - 4
+  - 6
+  heightDiff: 0.5
+  draggablePermutationPrefab: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
+  connectionData:
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 1
+    connectRight: 0
+    active: 1
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
 --- !u!1 &768487233
 GameObject:
   m_ObjectHideFlags: 0
@@ -43896,7 +43943,6 @@ MonoBehaviour:
   widths: []
   heightDiff: 0
   draggablePermutationPrefab: {fileID: 0}
-  connectionTypes: 00000000000000000000000000000000
   connectionData: []
 --- !u!1 &883010377
 GameObject:
@@ -52469,7 +52515,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1140233373}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -16.86, y: -56.7, z: -5}
+  m_LocalPosition: {x: -55.36, y: -41.87, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1770082435}
@@ -60732,7 +60778,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366667678}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.860003, y: -55.95, z: -15}
+  m_LocalPosition: {x: -55.36, y: -41.12, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1471269575}
@@ -61319,33 +61365,28 @@ MonoBehaviour:
   lines: []
   connections: []
   permutationLinePrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
-  linePermutationCount: 5
+  linePermutationCount: 3
   widths:
-  - 2
-  - 2
-  - 2
-  - 2
-  - 2
+  - 6
+  - 4
+  - 6
   heightDiff: 1
   draggablePermutationPrefab: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
-  connectionTypes: 0100000000000000000000000000000000000000ffffffff
   connectionData:
-  - connectLeft: 0
-    connectRight: 1
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
     active: 0
-  - connectLeft: 1
-    connectRight: 1
+  - show: 1
+    connectLeft: 0
+    connectRight: 0
     active: 0
-  - connectLeft: 1
+  - show: 1
+    connectLeft: 1
     connectRight: 0
     active: 1
-  - connectLeft: 1
-    connectRight: 1
-    active: 1
-  - connectLeft: 1
-    connectRight: 1
-    active: 1
-  - connectLeft: 1
+  - show: 0
+    connectLeft: 0
     connectRight: 0
     active: 0
 --- !u!4 &1381768286
@@ -61356,7 +61397,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1381768284}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -25.94, y: -56.4, z: -3.8703673}
+  m_LocalPosition: {x: -56.79, y: -37.73, z: -3.8703673}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -73803,8 +73844,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1927647341}
   - component: {fileID: 1927647342}
+  - component: {fileID: 1927647343}
   m_Layer: 0
-  m_Name: Permutation Lines
+  m_Name: Permutation Lines Middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73845,6 +73887,47 @@ MonoBehaviour:
   widthPermutation: 4
   widthRight: 6
   isStatic: 0
+--- !u!114 &1927647343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1927647340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28190871791673749849419c3190be71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  permutationSize: 5
+  generateFromExistingObjects: 0
+  lines: []
+  connections: []
+  permutationLinePrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
+  linePermutationCount: 3
+  widths:
+  - 6
+  - 4
+  - 6
+  heightDiff: 0.5
+  draggablePermutationPrefab: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
+  connectionData:
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 1
+    connectRight: 0
+    active: 1
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
 --- !u!1 &1927927561
 GameObject:
   m_ObjectHideFlags: 0
@@ -73987,7 +74070,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1928514171}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.860003, y: -55.95, z: -15}
+  m_LocalPosition: {x: -55.36, y: -41.12, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1782938398}

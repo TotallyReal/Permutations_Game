@@ -36,7 +36,7 @@ public class OnOffColors : MonoBehaviour
     private void OnPressed(object sender, DragablePermutation.DraggingArgs args)
     {
         colorsOn[args.positionIndex] = !colorsOn[args.positionIndex];
-        chain.SetColors(colorsOn.Select((b, index) => b ? PipesRoom.colors[index] : invisible).ToArray());
+        chain.SetLeftColors(colorsOn.Select((b, index) => b ? PipesRoom.colors[index] : invisible).ToArray());
     }
 
     // Update is called once per frame

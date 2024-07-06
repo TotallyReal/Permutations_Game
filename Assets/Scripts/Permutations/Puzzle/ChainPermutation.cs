@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
+using static ChainPermutation;
 
 public class ChainPermutation : MonoBehaviour
 {
@@ -28,7 +29,6 @@ public class ChainPermutation : MonoBehaviour
     [SerializeField] private DragablePermutation draggablePermutationPrefab;
 
     [Header("Connection types")]
-    [SerializeField] private ConnectionType[] connectionTypes;
     [SerializeField] private ConnectionData[] connectionData;
 
     private Color[] currentColors;
@@ -36,15 +36,10 @@ public class ChainPermutation : MonoBehaviour
     [Serializable]
     public class ConnectionData
     {
+        public bool show = true;
         public bool connectLeft = true;
         public bool connectRight = true;
         public bool active = true;
-    }
-
-    public enum ConnectionType{
-        TO_LEFT = -1,
-        TO_BOTH = 0,
-        TO_RIGHT = 1
     }
 
     private void Awake()
@@ -52,7 +47,7 @@ public class ChainPermutation : MonoBehaviour
         if (!generateFromExistingObjects)
         {
             Assert.AreEqual(linePermutationCount, widths.Length);
-            Assert.AreEqual(linePermutationCount, connectionTypes.Length-1);
+            Assert.AreEqual(linePermutationCount, connectionData.Length-1);
 
             lines = new PermutationLines[linePermutationCount];
             connections = new DragablePermutation[linePermutationCount+1];
@@ -61,6 +56,7 @@ public class ChainPermutation : MonoBehaviour
             connections[0].transform.localPosition = Vector3.zero;
             connections[0].SetHeightDiff(heightDiff);
             connections[0].SetActive(connectionData[0].active);
+            connections[0].gameObject.SetActive(connectionData[0].show);
 
             float x = 0;
             for (int i = 0; i < linePermutationCount; i++)
@@ -71,40 +67,33 @@ public class ChainPermutation : MonoBehaviour
 
                 x += widths[i];
 
-                connections[i+1] = Instantiate(draggablePermutationPrefab, transform);
-                connections[i+1].transform.localPosition = new Vector3(x, 0, 0);
-                connections[i+1].SetHeightDiff(heightDiff);
-                connections[i+1].SetActive(connectionData[i+1].active);
+                connections[i + 1] = Instantiate(draggablePermutationPrefab, transform);
+                connections[i + 1].transform.localPosition = new Vector3(x, 0, 0);
+                connections[i + 1].SetHeightDiff(heightDiff);
+                connections[i + 1].SetActive(connectionData[i+1].active);
+                connections[i + 1].gameObject.SetActive(connectionData[i + 1].show);
             }
         }
-        CreateChain(permutationSize, lines, connections, connectionTypes, permutations);
+        CreateChain(permutationSize, lines, connections, connectionData, permutations);
     }
 
 
-    protected void CreateChain(int size, PermutationLines[] lines, DragablePermutation[] connections, ConnectionType[] connectionTypes, Permutation[] permutations)
+    protected void CreateChain(int size, PermutationLines[] lines, DragablePermutation[] connections, ConnectionData[] connectionData, Permutation[] permutations)
     {
         currentColors = PipesRoom.colors;
-        input = new Permutation(size);
         int n = lines.Length;
-        if (connections.Length - 1 != n || connectionTypes.Length - 1 != n)
+        if (connections.Length - 1 != n || connectionData.Length - 1 != n)
         {
             throw new System.Exception("There should be one more connection than lines");
-        }
-
-        for (int i = 0; i < n + 1; i++)
-        {
-            connectionTypes[i] = ConnectionType.TO_BOTH;
         }
 
         for (int i = 0; i < n; i++)
         {
             DragablePermutation leftConnection = null;
-            //if ((connections[i] != null) && (0 <= (int)connectionTypes[i]))
             if ((connections[i] != null) && connectionData[i].connectRight)
                 leftConnection = connections[i];
 
             DragablePermutation rightConnection = null;
-            //if ((connections[i + 1] != null) && (0 >= (int)connectionTypes[i + 1]))
             if ((connections[i] != null) && connectionData[i + 1].connectLeft)
                 rightConnection = connections[i + 1];
 
@@ -126,8 +115,7 @@ public class ChainPermutation : MonoBehaviour
                 connections[i].SetActive(connectionData[i].active);
             }
         }
-        UpdateConnections();
-        SetColors(currentColors);
+        UpdatePermutation();
     }
 
     private void OnEnable()
@@ -136,7 +124,7 @@ public class ChainPermutation : MonoBehaviour
         {
             foreach (var line in lines)
             {
-                line.OnPermutationChanged += OnPermutationChanged;
+                line.OnPermutationChanged += OnLinePermutationChanged;
             }
         }
     }
@@ -147,43 +135,48 @@ public class ChainPermutation : MonoBehaviour
         {
             foreach (var line in lines)
             {
-                line.OnPermutationChanged -= OnPermutationChanged;
+                line.OnPermutationChanged -= OnLinePermutationChanged;
             }
         }
     }
 
-    Permutation input;
+    private Permutation permutation;
 
-    private void UpdateConnections()
+    public event EventHandler<Permutation> OnPermutationChanged;
+
+    private void OnLinePermutationChanged(object sender, Permutation e)
     {
-        /*Permutation p = input;
+        UpdatePermutation();
+    }
 
-        if (connections[0] != null)
+    private void UpdatePermutation()
+    {
+        permutation = new Permutation(lines[0].GetPermutation().size); // TODO: this is awful. Add the size as parameter
+        foreach (var line in lines)
         {
-            connections[0].SetPermutation(p);
+            permutation = line.GetPermutation() * permutation;
         }
-        for (var i = 1; i < lines.Length; i++)
-        {
-            p *= lines[i - 1].GetPermutation();
-            if (connections[i] != null)
-                connections[i].SetPermutation(p);
-        }*/
+        SetLeftColors(currentColors);
 
+        OnPermutationChanged?.Invoke(this, permutation);
     }
 
-    private void OnPermutationChanged(object sender, Permutation e)
+    public Permutation GetPermutation()
     {
-
-        SetColors(currentColors);
+        return permutation;
     }
 
-    public void SetColors(Color[] colors)
+    public void SetPermutation(int index, Permutation permutation)
+    {
+        lines[index].UpdatePermutation(permutation);
+    }
+
+    public void SetLeftColors(Color[] colors)
     {
         if (lines == null)
-            return; 
+            return;
 
         currentColors = colors;
-        colors = input.Inverse().InverseOutput().Select(i => colors[i]).ToArray();
         if (connections[0] != null)
             connections[0].SetColors(colors);
 
@@ -191,8 +184,25 @@ public class ChainPermutation : MonoBehaviour
         {
             lines[i].SetColors(colors);
             Permutation p = lines[i].GetPermutation();
-            colors = p.InverseOutput().Select(i => colors[i]).ToArray();
-            connections[i + 1].SetColors(colors);
+            colors = p.InvApplyTo(colors);
+
+            if (connections[i + 1] != null)
+                connections[i + 1].SetColors(colors);
         }
+    }
+
+    public Color[] GetLeftColors()
+    {
+        return currentColors;
+    }
+
+    public void SetRightColors(Color[] colors)
+    {
+        SetLeftColors(permutation.ApplyTo(colors));
+    }
+
+    public Color[] GetRightColors()
+    {
+        return permutation.InvApplyTo(currentColors);
     }
 }

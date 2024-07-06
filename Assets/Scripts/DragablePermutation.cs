@@ -104,7 +104,8 @@ public class DragablePermutation : MonoBehaviour
     private int GetClosestPositionIndex(Vector2 point)
     {
         int secondTargetId = Mathf.RoundToInt(point.y / heightDiff);
-        if ((point - new Vector2(0, secondTargetId * heightDiff)).magnitude < latchingDistance)
+        if (0 <= secondTargetId && secondTargetId < size &&
+            (point - new Vector2(0, secondTargetId * heightDiff)).magnitude < latchingDistance)
         {
             return permutation.Inverse(secondTargetId);
         }
@@ -119,6 +120,7 @@ public class DragablePermutation : MonoBehaviour
     internal void SetHeightDiff(float heightDiff)
     {
         this.heightDiff = heightDiff;
+        CreatePositions();
         for (int i = 0; i < size; i++)
         {
             elements[i].transform.localPosition = positions[permutation[i]];

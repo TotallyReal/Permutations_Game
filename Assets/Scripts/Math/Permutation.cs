@@ -297,4 +297,38 @@ public class Permutation : IEnumerable<int>
         return ((IEnumerable<int>)this).GetEnumerator();
     }
 
+    /// <summary>
+    /// Given an array [a_0,a_1,...,a_{n-1}], returns
+    /// [a_{p(0)} , a_{p(1)} , ... , a_{p(n-1)}] .
+    /// In other words, returns the right action map i->p(i)->a(p(i)).
+    /// 
+    /// As this is a right action, we have that 
+    /// p.ApplyTo(q.Apply(arr)) = (q*p).ApplyTo(arr)
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="arr"></param>
+    /// <returns></returns>
+    public T[] ApplyTo<T>(T[] arr)
+    {
+        return Output().Select(i => arr[i]).ToArray();
+    }
+
+    /// <summary>
+    /// Given an array [a_0,a_1,...,a_{n-1}], returns
+    /// [a_{p^-1(0)} , a_{p^-1(1)} , ... , a_{p^-1(n-1)}] .
+    /// In other words, returns the left action map i->p^-1(i)->a(p^-1(i)).
+    /// 
+    /// As this is a left action, we have that 
+    /// p.InvApplyTo(q.InvApplyTo(arr)) = (p*q).InvApplyTo(arr)
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="arr"></param>
+    /// <returns></returns>
+    public T[] InvApplyTo<T>(T[] arr)
+    {
+        return InverseOutput().Select(i => arr[i]).ToArray();
+    }
+
 }
