@@ -23,17 +23,6 @@ public class PipesRoom : MonoBehaviour
     }
 
 
-
-    [Header("Visual component")]
-    [SerializeField] private PermutationLines linesPrefab;
-    [SerializeField] private DragablePermutation dragPermutation;
-    [SerializeField] private PermutationPipe pipePrefab;
-    private PermutationPipe[] pipes;
-    [SerializeField] private float heightDiff = 1;
-    [SerializeField] private float widthLeft = 6;
-    [SerializeField] private float widthPermutation = 4;
-    [SerializeField] private float widthRight = 6;
-
     [Header("Logic")]
     [SerializeField] private bool isStatic = false;
     private Permutation permutation = new Permutation(5);

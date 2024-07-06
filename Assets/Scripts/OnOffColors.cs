@@ -39,9 +39,4 @@ public class OnOffColors : MonoBehaviour
         chain.SetLeftColors(colorsOn.Select((b, index) => b ? PipesRoom.colors[index] : invisible).ToArray());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

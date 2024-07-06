@@ -24274,13 +24274,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linesPrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
-  dragPermutation: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
-  pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
-  heightDiff: 0.5
-  widthLeft: 6
-  widthPermutation: 4
-  widthRight: 6
   isStatic: 1
 --- !u!114 &762274460
 MonoBehaviour:
@@ -61096,6 +61089,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1377350037}
   - component: {fileID: 1377350038}
+  - component: {fileID: 1377350039}
   m_Layer: 0
   m_Name: Pipes Room
   m_TagString: Untagged
@@ -61130,14 +61124,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linesPrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
-  dragPermutation: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
-  pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
-  heightDiff: 0.5
-  widthLeft: 6
-  widthPermutation: 4
-  widthRight: 6
   isStatic: 1
+--- !u!114 &1377350039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377350036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28190871791673749849419c3190be71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  permutationSize: 5
+  generateFromExistingObjects: 0
+  lines: []
+  connections: []
+  permutationLinePrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
+  linePermutationCount: 3
+  widths:
+  - 6
+  - 4
+  - 6
+  heightDiff: 0.5
+  draggablePermutationPrefab: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
+  connectionData:
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 1
+    connectRight: 0
+    active: 1
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
 --- !u!1 &1377721391
 GameObject:
   m_ObjectHideFlags: 0
@@ -66345,6 +66373,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1740977773}
   - component: {fileID: 1740977774}
+  - component: {fileID: 1740977775}
   m_Layer: 0
   m_Name: Permutation Lines Right
   m_TagString: Untagged
@@ -66379,14 +66408,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linesPrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
-  dragPermutation: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
-  pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
-  heightDiff: 0.5
-  widthLeft: 6
-  widthPermutation: 4
-  widthRight: 6
   isStatic: 0
+--- !u!114 &1740977775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740977772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28190871791673749849419c3190be71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  permutationSize: 5
+  generateFromExistingObjects: 0
+  lines: []
+  connections: []
+  permutationLinePrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
+  linePermutationCount: 3
+  widths:
+  - 6
+  - 4
+  - 6
+  heightDiff: 0.5
+  draggablePermutationPrefab: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
+  connectionData:
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 1
+    connectRight: 0
+    active: 1
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
 --- !u!1 &1742072347
 GameObject:
   m_ObjectHideFlags: 0
@@ -73879,13 +73942,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linesPrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
-  dragPermutation: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
-  pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
-  heightDiff: 0.5
-  widthLeft: 6
-  widthPermutation: 4
-  widthRight: 6
   isStatic: 0
 --- !u!114 &1927647343
 MonoBehaviour:
@@ -76013,6 +76069,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2078724061}
   - component: {fileID: 2078724062}
+  - component: {fileID: 2078724063}
   m_Layer: 0
   m_Name: Pipes Room Right
   m_TagString: Untagged
@@ -76047,14 +76104,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a657f071a5efc4f478a49cc1227ade1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linesPrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
-  dragPermutation: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
-  pipePrefab: {fileID: 5873040564089327527, guid: e823d6abfc48b2c4e8f267e0c7995058, type: 3}
-  heightDiff: 0.5
-  widthLeft: 6
-  widthPermutation: 4
-  widthRight: 6
   isStatic: 1
+--- !u!114 &2078724063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2078724060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28190871791673749849419c3190be71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  permutationSize: 5
+  generateFromExistingObjects: 0
+  lines: []
+  connections: []
+  permutationLinePrefab: {fileID: 230230349420536869, guid: 92cf3cd06b7b00c49971de3547427cec, type: 3}
+  linePermutationCount: 3
+  widths:
+  - 6
+  - 4
+  - 6
+  heightDiff: 0.5
+  draggablePermutationPrefab: {fileID: 8136026105160174543, guid: 3f6876aa8f916474991634643a15ce12, type: 3}
+  connectionData:
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 0
+    connectRight: 0
+    active: 0
+  - show: 1
+    connectLeft: 1
+    connectRight: 0
+    active: 1
+  - show: 0
+    connectLeft: 0
+    connectRight: 0
+    active: 0
 --- !u!1 &2084850769
 GameObject:
   m_ObjectHideFlags: 0
